@@ -1,0 +1,141 @@
+{
+    "dsaQuestions": [
+      {
+        "topic": "Arrays",
+        "questions": [
+          {
+            "id": 1,
+            "title": "Two Sum",
+            "difficulty": "Easy",
+            "status": "Solved",
+            "company": "Amazon, Google",
+            "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+            "testCases": [
+              { "input": "[2,7,11,15], 9", "output": "[0,1]" },
+              { "input": "[3,2,4], 6", "output": "[1,2]" }
+            ],
+            "hints": [
+              "Use a hashmap to store previously visited numbers.",
+              "Check if the complement (target - num) exists in the hashmap."
+            ]
+          },
+          {
+            "id": 2,
+            "title": "Container With Most Water",
+            "difficulty": "Medium",
+            "status": "Unsolved",
+            "company": "Facebook, Microsoft",
+            "description": "Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai), find two lines that form a container that holds the most water.",
+            "testCases": [
+              { "input": "[1,8,6,2,5,4,8,3,7]", "output": "49" }
+            ],
+            "hints": [
+              "Use two pointers starting from both ends.",
+              "Move the pointer with the smaller height."
+            ]
+          },
+          {
+            "id": 3,
+            "title": "Trapping Rain Water",
+            "difficulty": "Hard",
+            "status": "Attempted",
+            "company": "Adobe, Apple",
+            "description": "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+            "testCases": [
+              { "input": "[0,1,0,2,1,0,1,3,2,1,2,1]", "output": "6" }
+            ],
+            "hints": [
+              "Use two pointers from both ends and track max heights.",
+              "Keep track of left max and right max values."
+            ]
+          },
+          {
+            "id": 4,
+            "title": "Product of Array Except Self",
+            "difficulty": "Medium",
+            "status": "Unsolved",
+            "company": "Microsoft, Google",
+            "description": "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all elements except nums[i].",
+            "testCases": [
+              { "input": "[1,2,3,4]", "output": "[24,12,8,6]" }
+            ],
+            "hints": [
+              "Use left and right product arrays.",
+              "Optimize using a single pass approach."
+            ]
+          },
+          {
+            "id": 5,
+            "title": "Best Time to Buy and Sell Stock",
+            "difficulty": "Easy",
+            "status": "Attempted",
+            "company": "Amazon, Bloomberg",
+            "description": "You are given an array prices where prices[i] is the price of a given stock on the ith day. Return the maximum profit you can achieve.",
+            "testCases": [
+              { "input": "[7,1,5,3,6,4]", "output": "5" }
+            ],
+            "hints": [
+              "Track minimum price seen so far.",
+              "Calculate max profit at each step."
+            ]
+          }
+        ]
+      },
+      {
+        "topic": "Linked Lists",
+        "questions": [
+          {
+            "id": 6,
+            "title": "Reverse Linked List",
+            "difficulty": "Easy",
+            "status": "Solved",
+            "company": "Google, Amazon",
+            "description": "Given the head of a singly linked list, reverse the list and return the reversed list.",
+            "testCases": [
+              { "input": "1->2->3->4->5", "output": "5->4->3->2->1" }
+            ],
+            "hints": [
+              "Iterate through the list and change the next pointer of each node.",
+              "Use three pointers: prev, curr, and next."
+            ]
+          },
+          {
+            "id": 7,
+            "title": "Merge Two Sorted Lists",
+            "difficulty": "Easy",
+            "status": "Unsolved",
+            "company": "Twitter, Uber",
+            "description": "Merge two sorted linked lists and return it as a sorted list.",
+            "testCases": [
+              { "input": "1->2->4, 1->3->4", "output": "1->1->2->3->4->4" }
+            ],
+            "hints": [
+              "Use a recursive approach.",
+              "Iterate through both lists and compare nodes."
+            ]
+          }
+        ]
+      },
+      {
+        "topic": "Trees & Graphs",
+        "questions": [
+          {
+            "id": 8,
+            "title": "Maximum Depth of Binary Tree",
+            "difficulty": "Easy",
+            "status": "Solved",
+            "company": "Microsoft, Amazon",
+            "description": "Given the root of a binary tree, return its maximum depth.",
+            "testCases": [
+              { "input": "[3,9,20,null,null,15,7]", "output": "3" }
+            ],
+            "hints": [
+              "Use Depth First Search (DFS).",
+              "The depth of a node is max depth of left and right child + 1."
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

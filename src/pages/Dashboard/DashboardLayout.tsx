@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ArrowDownCircle, CheckCircle, Code, PlayCircle, Terminal } from 'lucide-react';
 
 const LeetCodeDashboard = () => {
     const [activeTab, setActiveTab] = useState('code');
+    const [leftPanelWidth, setLeftPanelWidth] = useState(40); // Initial width percentage
+    const resizeRef = useRef(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const isDraggingRef = useRef(false);
 
     // Demo problem data
     const problem = {
@@ -64,10 +68,47 @@ Expected: [1,2]
 Runtime: 76 ms, faster than 85.13% of JavaScript submissions
 Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
 
+    // Handle resize logic
+    const handleMouseDown = (e) => {
+        e.preventDefault();
+        isDraggingRef.current = true;
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isDraggingRef.current) return;
+        if (!containerRef.current) return;
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+        
+        // Limit the resize range (min 20%, max 80%)
+        if (newWidth >= 20 && newWidth <= 80) {
+            setLeftPanelWidth(newWidth);
+        }
+    };
+
+    const handleMouseUp = () => {
+        isDraggingRef.current = false;
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    // Clean up event listeners
+    useEffect(() => {
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, []);
+
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen bg-gray-100" ref={containerRef}>
             {/* Problem panel (left side) */}
-            <div className="w-2/5 bg-white shadow-md overflow-y-auto">
+            <div 
+                className="bg-white shadow-md overflow-y-auto" 
+                style={{ width: `${leftPanelWidth}%` }}
+            >
                 <div className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h1 className="text-2xl font-bold">{problem.title}</h1>
@@ -98,8 +139,19 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                 </div>
             </div>
 
+            {/* Resizable divider */}
+            <div 
+                ref={resizeRef}
+                className="cursor-col-resize w-2 bg-gray-300 hover:bg-blue-400 active:bg-blue-600 transition-colors"
+                onMouseDown={handleMouseDown}
+                style={{ cursor: 'col-resize' }}
+            ></div>
+
             {/* Code panel (right side) */}
-            <div className="w-3/5 flex flex-col">
+            <div 
+                className="flex flex-col"
+                style={{ width: `${100 - leftPanelWidth}%` }}
+            >
                 {/* Tabs navigation */}
                 <div className="flex border-b border-gray-200 bg-white">
                     <button

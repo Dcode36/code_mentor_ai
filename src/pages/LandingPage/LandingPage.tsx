@@ -1,27 +1,64 @@
 import React from 'react';
-import { Brain, Code, Sparkles, Target, Trophy, Users } from 'lucide-react';
+import {  Code, Sparkles, Target, Trophy, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-function LandingPage() {
+import { useAuth } from '@clerk/clerk-react';
+import { Brain } from 'lucide-react';
 
+function LandingPage() {
     const navigate = useNavigate();
+    const { isSignedIn, signOut } = useAuth();
+    
+    const handleSignOut = () => {
+        signOut().then(() => {
+            navigate('/');
+        });
+    };
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
             <header className="container mx-auto px-6 py-16">
-                <nav className="flex items-center justify-between mb-16">
-                    <div className="flex items-center space-x-2">
-
-                        <Brain className="w-8 h-8 text-purple-500" />
-                        <span className="text-2xl font-bold text-white">CodeMentor.AI</span>
-                    </div>
-                    <div className="flex items-center space-x-8">
-                        <a href="#features" className="text-gray-300 hover:text-white transition">Features</a>
-                        <a href="#problems" className="text-gray-300 hover:text-white transition">Problems</a>
-                        <a href="#pricing" className="text-gray-300 hover:text-white transition">Pricing</a>
-                        <button className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+            <nav className="flex items-center justify-between mb-16">
+            <div className="flex items-center space-x-2">
+                <Brain className="w-8 h-8 text-purple-500" />
+                <span className="text-2xl font-bold text-white">CodeMentor.AI</span>
+            </div>
+            <div className="flex items-center space-x-8">
+                <a href="#features" className="text-gray-300 hover:text-white transition">Features</a>
+                <a href="#problems" className="text-gray-300 hover:text-white transition">Problems</a>
+                <a href="#pricing" className="text-gray-300 hover:text-white transition">Pricing</a>
+                
+                {isSignedIn ? (
+                    <>
+                        <button 
+                            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+                            onClick={() => navigate("/questions")}
+                        >
+                            Dashboard
+                        </button>
+                        <button 
+                            className="border border-gray-500 text-gray-300 px-6 py-2 rounded-lg hover:text-white hover:border-white transition"
+                            onClick={handleSignOut}
+                        >
+                            Sign Out
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button 
+                            className="text-gray-300 hover:text-white transition"
+                            onClick={() => navigate("/sign-in")}
+                        >
+                            Sign In
+                        </button>
+                        <button 
+                            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+                            onClick={() => navigate("/sign-up")}
+                        >
                             Get Started
                         </button>
-                    </div>
-                </nav>
+                    </>
+                )}
+            </div>
+        </nav>
 
                 <div className="flex items-center justify-between">
                     <div className="max-w-2xl">
