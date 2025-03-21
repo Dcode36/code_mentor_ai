@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ArrowDownCircle, CheckCircle, Code, PlayCircle, Terminal } from 'lucide-react';
+import { CheckCircle, Code, PlayCircle, Terminal } from 'lucide-react';
 
 const LeetCodeDashboard = () => {
     const [activeTab, setActiveTab] = useState('code');
