@@ -1,0 +1,75 @@
+{
+    "topics": [
+      {
+        "name": "Arrays",
+        "questions": [
+          {
+            "id": 1,
+            "title": "Two Sum",
+            "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+            "difficulty": "Easy"
+          },
+          {
+            "id": 2,
+            "title": "Best Time to Buy and Sell Stock",
+            "description": "You are given an array prices where prices[i] is the price of a given stock on the ith day. Return the maximum profit you can achieve.",
+            "difficulty": "Easy"
+          },
+          {
+            "id": 3,
+            "title": "Product of Array Except Self",
+            "description": "Given an integer array nums, return an array answer such that answer[i] is the product of all the elements of nums except nums[i].",
+            "difficulty": "Medium"
+          },
+          {
+            "id": 4,
+            "title": "Subarray Sum Equals K",
+            "description": "Given an array of integers nums and an integer k, return the total number of subarrays whose sum equals k.",
+            "difficulty": "Medium"
+          },
+          {
+            "id": 5,
+            "title": "Find the Duplicate Number",
+            "description": "Given an array of integers nums containing n + 1 integers where each integer is in the range [1, n] inclusive, find the duplicate number.",
+            "difficulty": "Hard"
+          }
+        ]
+      },
+      {
+        "name": "Strings",
+        "questions": [
+          {
+            "id": 6,
+            "title": "Reverse String",
+            "description": "Write a function that reverses a string. The input string is given as an array of characters.",
+            "difficulty": "Easy"
+          },
+          {
+            "id": 7,
+            "title": "Valid Anagram",
+            "description": "Given two strings s and t, return true if t is an anagram of s, and false otherwise.",
+            "difficulty": "Easy"
+          },
+          {
+            "id": 8,
+            "title": "Longest Palindromic Substring",
+            "description": "Given a string s, return the longest palindromic substring in s.",
+            "difficulty": "Medium"
+          },
+          {
+            "id": 9,
+            "title": "Group Anagrams",
+            "description": "Given an array of strings, group the anagrams together.",
+            "difficulty": "Medium"
+          },
+          {
+            "id": 10,
+            "title": "Minimum Window Substring",
+            "description": "Given two strings s and t, return the minimum window substring of s such that every character in t is included.",
+            "difficulty": "Hard"
+          }
+        ]
+      }
+    ]
+  }
+  
