@@ -1,15 +1,29 @@
 import { useState, useRef, useEffect } from 'react';
 import { CheckCircle, Code, PlayCircle, Terminal } from 'lucide-react';
 
+interface Example {
+    input: string;
+    output: string;
+    explanation: string;
+}
+
+interface Problem {
+    title: string;
+    difficulty: string;
+    description: string;
+    examples: Example[];
+    constraints: string[];
+}
+
 const LeetCodeDashboard = () => {
-    const [activeTab, setActiveTab] = useState('code');
-    const [leftPanelWidth, setLeftPanelWidth] = useState(40); // Initial width percentage
-    const resizeRef = useRef(null);
+    const [activeTab, setActiveTab] = useState<'code' | 'result'>('code');
+    const [leftPanelWidth, setLeftPanelWidth] = useState<number>(40); // Initial width percentage
+    const resizeRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const isDraggingRef = useRef(false);
+    const isDraggingRef = useRef<boolean>(false);
 
     // Demo problem data
-    const problem = {
+    const problem: Problem = {
         title: "Two Sum",
         difficulty: "Easy",
         description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
@@ -38,14 +52,14 @@ You can return the answer in any order.`,
     };
 
     // Demo code
-    const [code, setCode] = useState(`function twoSum(nums, target) {
-    const map = new Map();
+    const [code, setCode] = useState<string>(`function twoSum(nums: number[], target: number): number[] {
+    const map = new Map<number, number>();
     
     for (let i = 0; i < nums.length; i++) {
         const complement = target - nums[i];
         
         if (map.has(complement)) {
-            return [map.get(complement), i];
+            return [map.get(complement)!, i];
         }
         
         map.set(nums[i], i);
@@ -65,23 +79,23 @@ Input: nums = [3,2,4], target = 6
 Output: [1,2]
 Expected: [1,2]
 
-Runtime: 76 ms, faster than 85.13% of JavaScript submissions
-Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
+Runtime: 76 ms, faster than 85.13% of TypeScript submissions
+Memory: 42.5 MB, less than 68.22% of TypeScript submissions`;
 
     // Handle resize logic
-    const handleMouseDown = (e) => {
+    const handleMouseDown = (e: React.MouseEvent) => {
         e.preventDefault();
         isDraggingRef.current = true;
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
     };
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
         if (!isDraggingRef.current) return;
         if (!containerRef.current) return;
         const containerRect = containerRef.current.getBoundingClientRect();
         const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-        
+
         // Limit the resize range (min 20%, max 80%)
         if (newWidth >= 20 && newWidth <= 80) {
             setLeftPanelWidth(newWidth);
@@ -103,34 +117,34 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
     }, []);
 
     return (
-        <div className="flex h-screen bg-gray-100" ref={containerRef}>
+        <div className="flex h-screen bg-gray-900" ref={containerRef}>
             {/* Problem panel (left side) */}
-            <div 
-                className="bg-white shadow-md overflow-y-auto" 
+            <div
+                className="bg-gray-800 shadow-md overflow-y-auto border-r border-gray-600"
                 style={{ width: `${leftPanelWidth}%` }}
             >
                 <div className="p-6">
                     <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold">{problem.title}</h1>
-                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                        <h1 className="text-2xl font-bold text-white">{problem.title}</h1>
+                        <span className="px-3 py-1 bg-green-900 text-green-300 rounded-full text-sm font-medium">
                             {problem.difficulty}
                         </span>
                     </div>
 
-                    <div className="prose max-w-none">
-                        <p className="whitespace-pre-line">{problem.description}</p>
+                    <div className="prose prose-invert max-w-none">
+                        <p className="whitespace-pre-line text-gray-300">{problem.description}</p>
 
-                        <h3 className="font-medium mt-6 mb-2">Examples:</h3>
+                        <h3 className="font-medium mt-6 mb-2 text-white">Examples:</h3>
                         {problem.examples.map((example, idx) => (
-                            <div key={idx} className="mb-4 bg-gray-50 p-4 rounded-md">
+                            <div key={idx} className="mb-4 bg-gray-700 p-4 rounded-md text-gray-300">
                                 <p><strong>Input:</strong> {example.input}</p>
                                 <p><strong>Output:</strong> {example.output}</p>
                                 <p><strong>Explanation:</strong> {example.explanation}</p>
                             </div>
                         ))}
 
-                        <h3 className="font-medium mt-6 mb-2">Constraints:</h3>
-                        <ul className="list-disc pl-5">
+                        <h3 className="font-medium mt-6 mb-2 text-white">Constraints:</h3>
+                        <ul className="list-disc pl-5 text-gray-300">
                             {problem.constraints.map((constraint, idx) => (
                                 <li key={idx}>{constraint}</li>
                             ))}
@@ -140,29 +154,29 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
             </div>
 
             {/* Resizable divider */}
-            <div 
+            <div
                 ref={resizeRef}
-                className="cursor-col-resize w-2 bg-gray-300 hover:bg-blue-400 active:bg-blue-600 transition-colors"
+                className="cursor-col-resize w-2 bg-gray-600 hover:bg-purple-500 active:bg-purple-600 transition-colors"
                 onMouseDown={handleMouseDown}
                 style={{ cursor: 'col-resize' }}
             ></div>
 
             {/* Code panel (right side) */}
-            <div 
+            <div
                 className="flex flex-col"
                 style={{ width: `${100 - leftPanelWidth}%` }}
             >
                 {/* Tabs navigation */}
-                <div className="flex border-b border-gray-200 bg-white">
+                <div className="flex border-b border-gray-600 bg-gray-800">
                     <button
-                        className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'code' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
+                        className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'code' ? 'text-purple-500 border-b-2 border-purple-500' : 'text-gray-300'}`}
                         onClick={() => setActiveTab('code')}
                     >
                         <Code size={18} />
                         Code
                     </button>
                     <button
-                        className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'result' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
+                        className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'result' ? 'text-purple-500 border-b-2 border-purple-500' : 'text-gray-300'}`}
                         onClick={() => setActiveTab('result')}
                     >
                         <Terminal size={18} />
@@ -174,18 +188,18 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                 <div className="flex-1 overflow-hidden">
                     {activeTab === 'code' && (
                         <div className="h-full flex flex-col">
-                            <div className="bg-gray-800 text-white p-3 flex justify-between items-center">
+                            <div className="bg-gray-800 text-white p-3 flex justify-between items-center border-b border-gray-600">
                                 <div className="flex gap-2">
-                                    <span className="px-2 py-1 bg-gray-700 rounded text-sm">JavaScript</span>
+                                    <span className="px-2 py-1 bg-gray-700 rounded text-sm">TypeScript</span>
                                 </div>
-                                <button className="bg-green-600 hover:bg-green-700 px-4 py-1 rounded flex items-center gap-1">
+                                <button className="bg-purple-600 hover:bg-purple-700 px-4 py-1 rounded flex items-center gap-1">
                                     <PlayCircle size={16} />
                                     Run
                                 </button>
                             </div>
                             <div className="flex-1 bg-gray-900 p-4 overflow-y-auto">
                                 <textarea
-                                    className="w-full h-full bg-gray-900 text-gray-100 font-mono resize-none outline-none"
+                                    className="w-full h-full bg-gray-900 text-gray-300 font-mono resize-none outline-none"
                                     value={code}
                                     onChange={(e) => setCode(e.target.value)}
                                 />

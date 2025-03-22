@@ -13,7 +13,7 @@ const App: React.FC = () => {
         <Route path="/" element={<LandingPage />} />
 
         {/* Dashboard Layout */}
-        <Route path="/dashboard/*" element={<DashboardLayout />} />
+        <Route path="/dashboard/*" element={<DashboardLayout/>} />
 
         {/* Question Table Route */}
         <Route path="/questions" element={<QuestionTable questions={dsaQuestions} />} />
