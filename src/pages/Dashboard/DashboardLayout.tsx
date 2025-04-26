@@ -194,7 +194,7 @@ Memory: 42.5 MB, less than 68.22% of TypeScript submissions`;
                                 </div>
                                 <button className="bg-purple-600 hover:bg-purple-700 px-4 py-1 rounded flex items-center gap-1">
                                     <PlayCircle size={16} />
-                                    Run
+                                    Run 
                                 </button>
                             </div>
                             <div className="flex-1 bg-gray-900 p-4 overflow-y-auto">
