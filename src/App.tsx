@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import QuestionTable from "./pages/Ques/QuestionTable";
 import { dsaQuestions } from "./pages/Ques/dsaQuestions";
+import QuestionDetails from "./pages/Ques/QuestionDetail";
 
 const App: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const App: React.FC = () => {
 
         {/* Question Table Route */}
         <Route path="/questions" element={<QuestionTable questions={dsaQuestions} />} />
+        <Route path="/quesdesc/:id"  element =  {<QuestionDetails/>}/>
 
         {/* Handle unknown routes */}
         <Route path="*" element={<Navigate to="/" replace />} />
