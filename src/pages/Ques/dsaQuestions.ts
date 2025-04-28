@@ -2,13 +2,14 @@ export interface Question {
   id: number;
   title: string;
   description: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  testCases: Array<{
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  companies: string[];
+  testCases: {
     input: string;
     output: string;
-  }>;
-  companies: string[];
-  hints?: string[]; // Optional hints array
+    explanation?: string; // explanation is optional
+  }[];
+  hints?: string[]; // optional because not all questions have hints
 }
 
 export const dsaQuestions: Question[] = [

@@ -7,6 +7,9 @@ interface QuestionTableProps {
 }
 
 const QuestionTable: React.FC<QuestionTableProps> = ({ questions }) => {
+
+
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
       case 'easy':
@@ -42,9 +45,8 @@ const QuestionTable: React.FC<QuestionTableProps> = ({ questions }) => {
               {questions.map((question, index) => (
                 <tr
                   key={question.id}
-                  className={`group transition-all duration-300 ${
-                    index % 2 === 0 ? 'bg-black' : 'bg-gray-900'
-                  } hover:bg-violet-900`}
+                  className={`group transition-all duration-300 ${index % 2 === 0 ? 'bg-black' : 'bg-gray-900'
+                    } hover:bg-violet-900`}
                 >
                   <td className="px-6 py-5">
                     <div className="text-lg font-semibold text-white group-hover:text-pink-400 transition-colors">
@@ -71,15 +73,18 @@ const QuestionTable: React.FC<QuestionTableProps> = ({ questions }) => {
                   <td className="px-6 py-5 flex justify-center">
                     <Link
                       to={`/quesdesc/${question.id}`}
+                      state={{ problem: question }}
                       className="text-violet-400 hover:text-pink-400 transition-colors p-2 rounded-full hover:bg-violet-900/50"
                       title="View Description"
                     >
                       👁️
                     </Link>
+
                   </td>
                   <td className="px-6 py-5">
                     <Link
                       to={`/dashboard/solve/${question.id}`}
+                      state={{ problem: question }}
                       className="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-pink-500/30"
                     >
                       <svg
@@ -93,6 +98,7 @@ const QuestionTable: React.FC<QuestionTableProps> = ({ questions }) => {
                       </svg>
                       Solve
                     </Link>
+
                   </td>
                 </tr>
               ))}

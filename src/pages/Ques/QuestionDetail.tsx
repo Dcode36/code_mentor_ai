@@ -45,10 +45,10 @@ const QuestionDetails: React.FC = () => {
           <p className="mt-4 text-gray-400 text-lg">
             <strong>Difficulty:</strong>{" "}
             <span className={`ml-2 px-3 py-1 rounded-full text-xs font-medium ${question.difficulty.toLowerCase() === "easy"
-                ? "bg-green-900/40 text-green-300 border border-green-700/30"
-                : question.difficulty.toLowerCase() === "medium"
-                  ? "bg-yellow-900/40 text-yellow-300 border border-yellow-700/30"
-                  : "bg-rose-900/40 text-rose-300 border border-rose-700/30"
+              ? "bg-green-900/40 text-green-300 border border-green-700/30"
+              : question.difficulty.toLowerCase() === "medium"
+                ? "bg-yellow-900/40 text-yellow-300 border border-yellow-700/30"
+                : "bg-rose-900/40 text-rose-300 border border-rose-700/30"
               }`}>
               {question.difficulty}
             </span>

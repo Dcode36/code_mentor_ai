@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { CheckCircle, Code, PlayCircle, Terminal, ArrowLeft, List, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 // Modal component for the QuestionTable
@@ -12,15 +13,15 @@ interface ModalProps {
 
 const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
     if (!isOpen) return null;
-
+    
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
             <div className="bg-gray-900 text-gray-100 rounded-lg w-4/5 max-w-4xl max-h-5/6 flex flex-col">
-                <div className="flex justify-between items-center border-b border-violet-900 p-4">
-                    <h2 className="text-xl font-bold text-violet-400">{title}</h2>
-                    <button
+                <div className="flex justify-between items-center border-b border-pink-900 p-4">
+                    <h2 className="text-xl font-bold text-pink-400">{title}</h2>
+                    <button 
                         onClick={onClose}
-                        className="text-gray-400 hover:text-violet-400"
+                        className="text-gray-400 hover:text-pink-400"
                     >
                         <X size={24} />
                     </button>
@@ -50,24 +51,25 @@ const QuestionTable = () => {
         <div className="overflow-x-auto">
             <table className="min-w-full">
                 <thead>
-                    <tr className="border-b border-violet-900">
-                        <th className="py-3 px-4 text-left text-violet-300">ID</th>
-                        <th className="py-3 px-4 text-left text-violet-300">Title</th>
-                        <th className="py-3 px-4 text-left text-violet-300">Difficulty</th>
-                        <th className="py-3 px-4 text-left text-violet-300">Acceptance</th>
-                        <th className="py-3 px-4 text-left text-violet-300">Status</th>
+                    <tr className="border-b border-pink-900">
+                        <th className="py-3 px-4 text-left text-pink-300">ID</th>
+                        <th className="py-3 px-4 text-left text-pink-300">Title</th>
+                        <th className="py-3 px-4 text-left text-pink-300">Difficulty</th>
+                        <th className="py-3 px-4 text-left text-pink-300">Acceptance</th>
+                        <th className="py-3 px-4 text-left text-pink-300">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {questions.map((question) => (
                         <tr key={question.id} className="border-b border-gray-800 hover:bg-gray-800">
                             <td className="py-3 px-4">{question.id}</td>
-                            <td className="py-3 px-4 text-violet-400">{question.title}</td>
+                            <td className="py-3 px-4 text-pink-400">{question.title}</td>
                             <td className="py-3 px-4">
-                                <span className={`px-2 py-1 rounded-full text-xs ${question.difficulty === "Easy" ? "bg-green-900 text-green-300" :
-                                        question.difficulty === "Medium" ? "bg-yellow-900 text-yellow-300" :
-                                            "bg-red-900 text-red-300"
-                                    }`}>
+                                <span className={`px-2 py-1 rounded-full text-xs ${
+                                    question.difficulty === "Easy" ? "bg-green-900 text-green-300" :
+                                    question.difficulty === "Medium" ? "bg-yellow-900 text-yellow-300" :
+                                    "bg-red-900 text-red-300"
+                                }`}>
                                     {question.difficulty}
                                 </span>
                             </td>
@@ -101,34 +103,14 @@ const LeetCodeDashboard = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const isDraggingRef = useRef(false);
 
-    // Demo problem data
-    const problem = {
-        title: "Two Sum",
-        difficulty: "Easy",
-        description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
-    
-You may assume that each input would have exactly one solution, and you may not use the same element twice.
+    const location = useLocation();
+    const problem = location.state?.problem; // Safe access
+  
+    if (!problem) {
+      return <div>Problem not found. Please try again.</div>;
+    }
 
-You can return the answer in any order.`,
-        examples: [
-            {
-                input: "nums = [2,7,11,15], target = 9",
-                output: "[0,1]",
-                explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
-            },
-            {
-                input: "nums = [3,2,4], target = 6",
-                output: "[1,2]",
-                explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]."
-            }
-        ],
-        constraints: [
-            "2 <= nums.length <= 104",
-            "-109 <= nums[i] <= 109",
-            "-109 <= target <= 109",
-            "Only one valid answer exists."
-        ]
-    };
+
 
     // Demo code
     const [code, setCode] = useState(`function twoSum(nums, target) {
@@ -178,7 +160,7 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
         if (!containerRef.current) return;
         const containerRect = containerRef.current.getBoundingClientRect();
         const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-
+        
         // Limit the resize range (min 20%, max 80%)
         if (newWidth >= 20 && newWidth <= 80) {
             setLeftPanelWidth(newWidth);
@@ -202,18 +184,18 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
     return (
         <div className="flex flex-col h-screen bg-black" ref={containerRef}>
             {/* Header */}
-            <header className="bg-gray-900 text-gray-100 px-4 py-3 border-b border-violet-900 flex justify-between items-center">
-                <Link
-                    to="/questions"
-                    className="flex items-center gap-2 text-violet-400 hover:text-violet-300 transition-colors"
-                >
-                    <ArrowLeft size={20} />
-                    <span>Back to Problems</span>
-                </Link>
-                <h1 className="text-xl font-bold text-violet-400 hidden md:block">CodeMentor AI</h1>
-
-                <button
-                    className="flex items-center gap-2 bg-violet-800 hover:bg-violet-700 px-4 py-2 rounded transition-colors"
+            <header className="bg-gray-900 text-gray-100 px-4 py-3 border-b border-pink-900 flex justify-between items-center">
+            <Link
+      to="/questions" // 👈 go to dashboard directly
+      className="flex items-center gap-2 text-pink-400 hover:text-pink-300 transition-colors"
+    >
+      <ArrowLeft size={20} />
+      <span>Back to Problems</span>
+    </Link>
+                <h1 className="text-xl font-bold text-pink-400 hidden md:block">CodeMentor AI</h1>
+                
+                <button 
+                    className="flex items-center gap-2 bg-pink-800 hover:bg-pink-700 px-4 py-2 rounded transition-colors"
                     onClick={() => setIsModalOpen(true)}
                 >
                     <List size={18} />
@@ -224,14 +206,14 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
             {/* Main content area */}
             <div className="flex flex-1 overflow-hidden">
                 {/* Problem panel (left side) */}
-                <div
-                    className="bg-gray-900 text-gray-100 shadow-md overflow-y-auto"
+                <div 
+                    className="bg-gray-900 text-gray-100 shadow-md overflow-y-auto" 
                     style={{ width: `${leftPanelWidth}%` }}
                 >
                     <div className="p-6">
                         <div className="flex justify-between items-center mb-4">
-                            <h1 className="text-2xl font-bold text-violet-400">{problem.title}</h1>
-                            <span className="px-3 py-1 bg-violet-900 text-violet-200 rounded-full text-sm font-medium">
+                            <h1 className="text-2xl font-bold text-pink-400">{problem.title}</h1>
+                            <span className="px-3 py-1 bg-pink-900 text-pink-200 rounded-full text-sm font-medium">
                                 {problem.difficulty}
                             </span>
                         </div>
@@ -239,49 +221,46 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                         <div className="prose max-w-none text-gray-300">
                             <p className="whitespace-pre-line">{problem.description}</p>
 
-                            <h3 className="font-medium mt-6 mb-2 text-violet-300">Examples:</h3>
-                            {problem.examples.map((example, idx) => (
-                                <div key={idx} className="mb-4 bg-gray-800 p-4 rounded-md">
-                                    <p><strong className="text-violet-400">Input:</strong> {example.input}</p>
-                                    <p><strong className="text-violet-400">Output:</strong> {example.output}</p>
-                                    <p><strong className="text-violet-400">Explanation:</strong> {example.explanation}</p>
-                                </div>
-                            ))}
+                            <h3 className="font-medium mt-6 mb-2 text-pink-300">TestCases:</h3>
+                            {problem.testCases.map((testcase: { input: string; output: string; explanation?: string }, idx:number) => (
+  <div key={idx}>
+    <p>Input: {testcase.input}</p>
+    <p>Output: {testcase.output}</p>
+    {testcase.explanation && <p>Explanation: {testcase.explanation}</p>}
+  </div>
+))}
 
-                            <h3 className="font-medium mt-6 mb-2 text-violet-300">Constraints:</h3>
-                            <ul className="list-disc pl-5">
-                                {problem.constraints.map((constraint, idx) => (
-                                    <li key={idx}>{constraint}</li>
-                                ))}
-                            </ul>
+
+                            <h3 className="font-medium mt-6 mb-2 text-pink-300">Constraints:</h3>
+                         
                         </div>
                     </div>
                 </div>
 
                 {/* Resizable divider */}
-                <div
+                <div 
                     ref={resizeRef}
-                    className="cursor-col-resize w-2 bg-violet-700 hover:bg-violet-500 active:bg-violet-400 transition-colors"
+                    className="cursor-col-resize w-2 bg-pink-700 hover:bg-pink-500 active:bg-pink-400 transition-colors"
                     onMouseDown={handleMouseDown}
                     style={{ cursor: 'col-resize' }}
                 ></div>
 
                 {/* Code panel (right side) */}
-                <div
+                <div 
                     className="flex flex-col"
                     style={{ width: `${100 - leftPanelWidth}%` }}
                 >
                     {/* Tabs navigation */}
-                    <div className="flex border-b border-violet-900 bg-gray-900">
+                    <div className="flex border-b border-pink-900 bg-gray-900">
                         <button
-                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'code' ? 'text-violet-400 border-b-2 border-violet-500' : 'text-gray-400'}`}
+                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'code' ? 'text-pink-400 border-b-2 border-pink-500' : 'text-gray-400'}`}
                             onClick={() => setActiveTab('code')}
                         >
                             <Code size={18} />
                             Code
                         </button>
                         <button
-                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'result' ? 'text-violet-400 border-b-2 border-violet-500' : 'text-gray-400'}`}
+                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'result' ? 'text-pink-400 border-b-2 border-pink-500' : 'text-gray-400'}`}
                             onClick={() => setActiveTab('result')}
                         >
                             <Terminal size={18} />
@@ -293,18 +272,18 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                     <div className="flex-1 overflow-hidden">
                         {activeTab === 'code' && (
                             <div className="h-full flex flex-col">
-                                <div className="bg-gray-900 text-gray-200 p-3 flex justify-between items-center border-b border-violet-900">
+                                <div className="bg-gray-900 text-gray-200 p-3 flex justify-between items-center border-b border-pink-900">
                                     <div className="flex gap-2">
                                         <span className="px-2 py-1 bg-gray-800 rounded text-sm">JavaScript</span>
                                     </div>
-                                    <button className="bg-violet-600 hover:bg-violet-700 px-4 py-1 rounded flex items-center gap-1">
+                                    <button className="bg-pink-600 hover:bg-pink-700 px-4 py-1 rounded flex items-center gap-1">
                                         <PlayCircle size={16} />
                                         Run
                                     </button>
                                 </div>
                                 <div className="flex-1 bg-black p-4 overflow-y-auto">
                                     <textarea
-                                        className="w-full h-full bg-black text-violet-100 font-mono resize-none outline-none"
+                                        className="w-full h-full bg-black text-pink-100 font-mono resize-none outline-none"
                                         value={code}
                                         onChange={(e) => setCode(e.target.value)}
                                     />
@@ -315,10 +294,10 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                         {activeTab === 'result' && (
                             <div className="h-full bg-black text-gray-200 p-6 overflow-y-auto">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <CheckCircle className="text-violet-500" size={20} />
-                                    <span className="font-medium text-violet-300">All Tests Passed</span>
+                                    <CheckCircle className="text-pink-500" size={20} />
+                                    <span className="font-medium text-pink-300">All Tests Passed</span>
                                 </div>
-                                <pre className="font-mono text-violet-100 whitespace-pre-wrap">{result}</pre>
+                                <pre className="font-mono text-pink-100 whitespace-pre-wrap">{result}</pre>
                             </div>
                         )}
                     </div>
@@ -326,10 +305,10 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
             </div>
 
             {/* Question List Modal */}
-            <Modal
-                isOpen={isModalOpen}
+            <Modal 
+                isOpen={isModalOpen} 
                 onClose={() => setIsModalOpen(false)}
-                title=" Problems Set"
+                title=" Problems "
             >
                 <QuestionTable />
             </Modal>

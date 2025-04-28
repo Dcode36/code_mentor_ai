@@ -31,14 +31,7 @@ const Navbar: React.FC = () => {
             </span>
           </a>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <a href="#features" className="text-gray-300 hover:text-violet-400 font-medium">Features</a>
-            <a href="#demo" className="text-gray-300 hover:text-violet-400 font-medium">Demo</a>
-            <a href="#pricing" className="text-gray-300 hover:text-violet-400 font-medium">Pricing</a>
-            <a href="#faq" className="text-gray-300 hover:text-violet-400 font-medium">FAQ</a>
-          </nav>
-
+        
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <a href="#" className="text-violet-400 font-medium hover:text-violet-300">Login</a>
@@ -66,10 +59,7 @@ const Navbar: React.FC = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 space-y-3">
-            <a href="#features" className="block text-gray-300 hover:text-violet-400 font-medium">Features</a>
-            <a href="#demo" className="block text-gray-300 hover:text-violet-400 font-medium">Demo</a>
-            <a href="#pricing" className="block text-gray-300 hover:text-violet-400 font-medium">Pricing</a>
-            <a href="#faq" className="block text-gray-300 hover:text-violet-400 font-medium">FAQ</a>
+        
             <div className="pt-2 flex flex-col space-y-2">
               <a href="#" className="text-violet-400 font-medium hover:text-violet-300">Login</a>
               <a href="#" className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all text-center">
