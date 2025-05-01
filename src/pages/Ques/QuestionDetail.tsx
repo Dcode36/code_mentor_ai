@@ -1,72 +1,102 @@
-import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 import { dsaQuestions } from "./dsaQuestions";
+import Navbar from "../../components/Navbar";
 
 const QuestionDetails: React.FC = () => {
-  const { id } = useParams<{ id?: string }>();
+  const { id } = useParams<{ id: string }>();
 
-  // Find the question by ID
+  if (!id) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-800">
+        <div className="text-center text-red-400 text-xl">❌ Invalid question id!</div>
+      </div>
+    );
+  }
+
   const question = dsaQuestions.find(q => q.id === Number(id));
+
+  useEffect(() => {
+    if (question) {
+      document.title = `${question.title} - Details`;
+    } else {
+      document.title = "Question Not Found";
+    }
+  }, [question]);
 
   if (!question) {
     return (
-      <div className="text-center mt-20 text-red-400 text-xl">
-        ❌ Question not found!
+      <div className="min-h-screen flex items-center justify-center bg-gray-800">
+        <div className="text-center text-red-400 text-xl">❌ Question not found!</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
-      <div className="max-w-5xl mx-auto mt-10 p-6 bg-gray-900 rounded-lg shadow-lg text-gray-200">
-        <h1 className="text-3xl font-bold text-blue-400">{question.title}</h1>
-        
-        <p className="mt-2 text-gray-400">
-          <strong>Difficulty:</strong>
-          <span className={`ml-2 px-3 py-1 rounded-full text-xs font-medium ${
-            question.difficulty === "easy"
+    <div className="bg-black min-h-screen text-slate-200">
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Content Section */}
+      <div className="flex items-start justify-center p-6 ">
+        <div className="max-w-5xl w-full mx-auto mt-10 p-8 bg-gray-900 rounded-2xl shadow-2xl text-gray-200">
+          <h1 className="text-3xl font-bold text-violet-400">{question.title}</h1>
+
+          <p className="mt-4 text-gray-400 text-lg">
+            <strong>Difficulty:</strong>{" "}
+            <span className={`ml-2 px-3 py-1 rounded-full text-xs font-medium ${question.difficulty.toLowerCase() === "easy"
               ? "bg-green-900/40 text-green-300 border border-green-700/30"
-              : question.difficulty === "medium"
+              : question.difficulty.toLowerCase() === "medium"
                 ? "bg-yellow-900/40 text-yellow-300 border border-yellow-700/30"
-                : "bg-red-900/40 text-red-300 border border-red-700/30"
-          }`}>
-            {question.difficulty}
-          </span>
-        </p>
-        
-        <p className="mt-2">
-          <strong>Companies:</strong> {question.companies.join(", ")}
-        </p>
+                : "bg-rose-900/40 text-rose-300 border border-rose-700/30"
+              }`}>
+              {question.difficulty}
+            </span>
+          </p>
 
-        <h2 className="text-xl font-semibold mt-6">Description</h2>
-        <p className="mt-2 text-gray-300">{question.description}</p>
+          <p className="mt-4 text-gray-400">
+            <strong>Companies:</strong> {question.companies.join(", ")}
+          </p>
 
-        <h2 className="text-xl font-semibold mt-6">Test Cases</h2>
-        <ul className="list-disc pl-6 text-gray-300">
-          {question.testCases.map((test, idx) => (
-            <li key={idx} className="mt-2 bg-gray-800 p-3 rounded-lg border border-gray-700">
-              <strong>Input:</strong> {test.input} <br />
-              <strong>Output:</strong> {test.output}
-            </li>
-          ))}
-        </ul>
+          <h2 className="text-2xl font-semibold mt-8 mb-2 text-white">Description</h2>
+          <p className="text-gray-300">{question.description}</p>
 
-        {question.hints && question.hints.length > 0 && (
-          <>
-            <h2 className="text-xl font-semibold mt-6">Hints</h2>
-            <ul className="list-disc pl-6 text-gray-300">
-              {question.hints?.map((hint, idx) => (
-                <li key={idx} className="mt-2">{hint}</li>
-              ))}
-            </ul>
-          </>
-        )}
+          <h2 className="text-2xl font-semibold mt-8 mb-2 text-white">Test Cases</h2>
+          <ul className="list-disc pl-6 text-gray-300 space-y-4">
+            {question.testCases.map((test, idx) => (
+              <li key={idx} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <strong>Input:</strong> {test.input} <br />
+                <strong>Output:</strong> {test.output}
+              </li>
+            ))}
+          </ul>
 
-        <div className="mt-6">
-          <a href="/dashboard">
-            <button className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-sm font-medium transition-all hover:scale-105">
+          {question.hints && question.hints.length > 0 && (
+            <>
+              <h2 className="text-2xl font-semibold mt-8 mb-2 text-white">Hints</h2>
+              <ul className="list-disc pl-6 text-gray-300 space-y-2">
+                {question.hints.map((hint, idx) => (
+                  <li key={idx}>{hint}</li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {/* Buttons */}
+          <div className="mt-10 flex space-x-6">
+            <Link to="/questions">
+              <button className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-semibold transition-all hover:scale-105">
+                🔙 Back to Dashboard
+              </button>
+            </Link>
+
+            <Link
+              to={`/questions/solve/${question.id}`}
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white rounded-lg text-sm font-semibold transition-all hover:scale-105 shadow-lg"
+            >
               Solve This Question 🚀
-            </button>
-          </a>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
