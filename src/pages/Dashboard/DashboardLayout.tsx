@@ -16,12 +16,12 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
     
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div className="bg-gray-900 text-gray-100 rounded-lg w-4/5 max-w-4xl max-h-5/6 flex flex-col">
-                <div className="flex justify-between items-center border-b border-pink-900 p-4">
-                    <h2 className="text-xl font-bold text-pink-400">{title}</h2>
+            <div className="bg-black text-white rounded-lg w-4/5 max-w-4xl max-h-5/6 flex flex-col">
+                <div className="flex justify-between items-center border-b border-purple-800 p-4">
+                    <h2 className="text-xl font-bold text-purple-400">{title}</h2>
                     <button 
                         onClick={onClose}
-                        className="text-gray-400 hover:text-pink-400"
+                        className="text-gray-400 hover:text-purple-400"
                     >
                         <X size={24} />
                     </button>
@@ -51,24 +51,24 @@ const QuestionTable = () => {
         <div className="overflow-x-auto">
             <table className="min-w-full">
                 <thead>
-                    <tr className="border-b border-pink-900">
-                        <th className="py-3 px-4 text-left text-pink-300">ID</th>
-                        <th className="py-3 px-4 text-left text-pink-300">Title</th>
-                        <th className="py-3 px-4 text-left text-pink-300">Difficulty</th>
-                        <th className="py-3 px-4 text-left text-pink-300">Acceptance</th>
-                        <th className="py-3 px-4 text-left text-pink-300">Status</th>
+                    <tr className="border-b border-purple-800">
+                        <th className="py-3 px-4 text-left text-purple-400">ID</th>
+                        <th className="py-3 px-4 text-left text-purple-400">Title</th>
+                        <th className="py-3 px-4 text-left text-purple-400">Difficulty</th>
+                        <th className="py-3 px-4 text-left text-purple-400">Acceptance</th>
+                        <th className="py-3 px-4 text-left text-purple-400">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {questions.map((question) => (
-                        <tr key={question.id} className="border-b border-gray-800 hover:bg-gray-800">
+                        <tr key={question.id} className="border-b border-purple-900 hover:bg-gray-900">
                             <td className="py-3 px-4">{question.id}</td>
-                            <td className="py-3 px-4 text-pink-400">{question.title}</td>
+                            <td className="py-3 px-4 text-purple-300">{question.title}</td>
                             <td className="py-3 px-4">
                                 <span className={`px-2 py-1 rounded-full text-xs ${
-                                    question.difficulty === "Easy" ? "bg-green-900 text-green-300" :
-                                    question.difficulty === "Medium" ? "bg-yellow-900 text-yellow-300" :
-                                    "bg-red-900 text-red-300"
+                                    question.difficulty === "Easy" ? "bg-purple-900 text-purple-200" :
+                                    question.difficulty === "Medium" ? "bg-purple-800 text-purple-200" :
+                                    "bg-purple-700 text-purple-200"
                                 }`}>
                                     {question.difficulty}
                                 </span>
@@ -76,13 +76,13 @@ const QuestionTable = () => {
                             <td className="py-3 px-4">{question.acceptance}</td>
                             <td className="py-3 px-4">
                                 {question.status === "Solved" && (
-                                    <span className="text-green-500 flex items-center gap-1">
+                                    <span className="text-purple-400 flex items-center gap-1">
                                         <CheckCircle size={16} />
                                         Solved
                                     </span>
                                 )}
                                 {question.status === "Attempted" && (
-                                    <span className="text-yellow-500">
+                                    <span className="text-purple-600">
                                         Attempted
                                     </span>
                                 )}
@@ -109,8 +109,6 @@ const LeetCodeDashboard = () => {
     if (!problem) {
       return <div>Problem not found. Please try again.</div>;
     }
-
-
 
     // Demo code
     const [code, setCode] = useState(`function twoSum(nums, target) {
@@ -184,18 +182,18 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
     return (
         <div className="flex flex-col h-screen bg-black" ref={containerRef}>
             {/* Header */}
-            <header className="bg-gray-900 text-gray-100 px-4 py-3 border-b border-pink-900 flex justify-between items-center">
-            <Link
-      to="/questions" // 👈 go to dashboard directly
-      className="flex items-center gap-2 text-pink-400 hover:text-pink-300 transition-colors"
-    >
-      <ArrowLeft size={20} />
-      <span>Back to Problems</span>
-    </Link>
-                <h1 className="text-xl font-bold text-pink-400 hidden md:block">CodeMentor AI</h1>
+            <header className="bg-black text-white px-4 py-3 border-b border-purple-900 flex justify-between items-center">
+                <Link
+                    to="/questions" // 👈 go to dashboard directly
+                    className="flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                    <ArrowLeft size={20} />
+                    <span>Back to Problems</span>
+                </Link>
+                <h1 className="text-xl font-bold text-purple-400 hidden md:block">CodeMentor AI</h1>
                 
                 <button 
-                    className="flex items-center gap-2 bg-pink-800 hover:bg-pink-700 px-4 py-2 rounded transition-colors"
+                    className="flex items-center gap-2 bg-purple-700 text-white hover:bg-purple-600 px-4 py-2 rounded transition-colors"
                     onClick={() => setIsModalOpen(true)}
                 >
                     <List size={18} />
@@ -205,15 +203,15 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
 
             {/* Main content area */}
             <div className="flex flex-1 overflow-hidden">
-                {/* Problem panel (left side) */}
+                {/* Problem panel (left side) - Black background with purple accents */}
                 <div 
-                    className="bg-gray-900 text-gray-100 shadow-md overflow-y-auto" 
+                    className="bg-black text-white shadow-md overflow-y-auto border-r border-purple-900" 
                     style={{ width: `${leftPanelWidth}%` }}
                 >
                     <div className="p-6">
                         <div className="flex justify-between items-center mb-4">
-                            <h1 className="text-2xl font-bold text-pink-400">{problem.title}</h1>
-                            <span className="px-3 py-1 bg-pink-900 text-pink-200 rounded-full text-sm font-medium">
+                            <h1 className="text-2xl font-bold text-purple-400">{problem.title}</h1>
+                            <span className="px-3 py-1 bg-purple-900 text-purple-200 rounded-full text-sm font-medium">
                                 {problem.difficulty}
                             </span>
                         </div>
@@ -221,18 +219,16 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                         <div className="prose max-w-none text-gray-300">
                             <p className="whitespace-pre-line">{problem.description}</p>
 
-                            <h3 className="font-medium mt-6 mb-2 text-pink-300">TestCases:</h3>
+                            <h3 className="font-medium mt-6 mb-2 text-purple-400">TestCases:</h3>
                             {problem.testCases.map((testcase: { input: string; output: string; explanation?: string }, idx:number) => (
-  <div key={idx}>
-    <p>Input: {testcase.input}</p>
-    <p>Output: {testcase.output}</p>
-    {testcase.explanation && <p>Explanation: {testcase.explanation}</p>}
-  </div>
-))}
+                                <div key={idx}>
+                                    <p>Input: {testcase.input}</p>
+                                    <p>Output: {testcase.output}</p>
+                                    {testcase.explanation && <p>Explanation: {testcase.explanation}</p>}
+                                </div>
+                            ))}
 
-
-                            <h3 className="font-medium mt-6 mb-2 text-pink-300">Constraints:</h3>
-                         
+                            <h3 className="font-medium mt-6 mb-2 text-purple-400">Constraints:</h3>
                         </div>
                     </div>
                 </div>
@@ -240,7 +236,7 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                 {/* Resizable divider */}
                 <div 
                     ref={resizeRef}
-                    className="cursor-col-resize w-2 bg-pink-700 hover:bg-pink-500 active:bg-pink-400 transition-colors"
+                    className="cursor-col-resize w-2 bg-purple-700 hover:bg-purple-500 active:bg-purple-400 transition-colors"
                     onMouseDown={handleMouseDown}
                     style={{ cursor: 'col-resize' }}
                 ></div>
@@ -251,16 +247,16 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                     style={{ width: `${100 - leftPanelWidth}%` }}
                 >
                     {/* Tabs navigation */}
-                    <div className="flex border-b border-pink-900 bg-gray-900">
+                    <div className="flex border-b border-purple-900 bg-black">
                         <button
-                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'code' ? 'text-pink-400 border-b-2 border-pink-500' : 'text-gray-400'}`}
+                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'code' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400'}`}
                             onClick={() => setActiveTab('code')}
                         >
                             <Code size={18} />
                             Code
                         </button>
                         <button
-                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'result' ? 'text-pink-400 border-b-2 border-pink-500' : 'text-gray-400'}`}
+                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'result' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400'}`}
                             onClick={() => setActiveTab('result')}
                         >
                             <Terminal size={18} />
@@ -272,18 +268,18 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                     <div className="flex-1 overflow-hidden">
                         {activeTab === 'code' && (
                             <div className="h-full flex flex-col">
-                                <div className="bg-gray-900 text-gray-200 p-3 flex justify-between items-center border-b border-pink-900">
+                                <div className="bg-black text-white p-3 flex justify-between items-center border-b border-purple-900">
                                     <div className="flex gap-2">
-                                        <span className="px-2 py-1 bg-gray-800 rounded text-sm">JavaScript</span>
+                                        <span className="px-2 py-1 bg-purple-900 text-purple-200 rounded text-sm">JavaScript</span>
                                     </div>
-                                    <button className="bg-pink-600 hover:bg-pink-700 px-4 py-1 rounded flex items-center gap-1">
+                                    <button className="bg-purple-700 text-white hover:bg-purple-600 px-4 py-1 rounded flex items-center gap-1">
                                         <PlayCircle size={16} />
                                         Run
                                     </button>
                                 </div>
                                 <div className="flex-1 bg-black p-4 overflow-y-auto">
                                     <textarea
-                                        className="w-full h-full bg-black text-pink-100 font-mono resize-none outline-none"
+                                        className="w-full h-full bg-black text-purple-200 font-mono resize-none outline-none"
                                         value={code}
                                         onChange={(e) => setCode(e.target.value)}
                                     />
@@ -292,12 +288,12 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                         )}
 
                         {activeTab === 'result' && (
-                            <div className="h-full bg-black text-gray-200 p-6 overflow-y-auto">
+                            <div className="h-full bg-black text-white p-6 overflow-y-auto">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <CheckCircle className="text-pink-500" size={20} />
-                                    <span className="font-medium text-pink-300">All Tests Passed</span>
+                                    <CheckCircle className="text-purple-400" size={20} />
+                                    <span className="font-medium text-purple-400">All Tests Passed</span>
                                 </div>
-                                <pre className="font-mono text-pink-100 whitespace-pre-wrap">{result}</pre>
+                                <pre className="font-mono text-purple-200 whitespace-pre-wrap">{result}</pre>
                             </div>
                         )}
                     </div>

@@ -135,7 +135,7 @@ const LandingPage: React.FC = () => {
               Solve DSA challenges with personalized hints, detailed walkthroughs, and AI-driven feedback designed to fit your learning style.
             </p>
 
-     
+            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <a
                 href="/questions"
@@ -144,7 +144,7 @@ const LandingPage: React.FC = () => {
                 Start Coding For Free
               </a>
               <a
-                href="/"
+                href="/demo"
                 className="px-8 py-4 border border-violet-700 rounded-lg text-white font-semibold hover:bg-violet-900 hover:bg-opacity-30 transition"
               >
                 See How It Works
