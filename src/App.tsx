@@ -10,7 +10,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Landing Page */}
+
         <Route path="/" element={<LandingPage />} />
 
         {/* Dashboard Layout */}
