@@ -21,13 +21,13 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Public Route */}
+
         <Route path="/" element={<LandingPage />} />
         <Route path="/sign-in" element={<SignIn routing="path" path="/sign-in" />} />
         <Route path="/sign-up" element={<SignUp routing="path" path="/sign-up" />} />
 
 
-        {/* Protected Routes */}
+
         <Route
           path="/dashboard/*"
           element={
