@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { CheckCircle, Code, PlayCircle, Terminal, ArrowLeft, List, X } from 'lucide-react';
+import { CheckCircle, Code, PlayCircle, Terminal, ArrowLeft, List, X, Lightbulb, BookOpen } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-// Modal component for the QuestionTable
+// Modal component for the QuestionTable and other modals
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -13,20 +13,22 @@ interface ModalProps {
 
 const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
     if (!isOpen) return null;
-    
+
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div className="bg-black text-white rounded-lg w-4/5 max-w-4xl max-h-5/6 flex flex-col">
-                <div className="flex justify-between items-center border-b border-gray-800 p-4">
-                    <h2 className="text-xl font-bold text-white">{title}</h2>
-                    <button 
+        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center backdrop-blur-sm">
+            <div className="bg-gray-900 text-white rounded-lg w-4/5 max-w-4xl max-h-[90vh] flex flex-col border-2 border-purple-500/50 shadow-xl shadow-purple-900/30">
+                <div className="flex justify-between items-center border-b border-purple-500/30 p-4 bg-gray-900">
+                    <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                        {title}
+                    </h2>
+                    <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-white"
+                        className="text-gray-400 hover:text-purple-300 transition-colors"
                     >
                         <X size={24} />
                     </button>
                 </div>
-                <div className="p-4 overflow-y-auto flex-1">
+                <div className="p-4 overflow-y-auto flex-1 custom-scrollbar">
                     {children}
                 </div>
             </div>
@@ -51,7 +53,7 @@ const QuestionTable = () => {
         <div className="overflow-x-auto">
             <table className="min-w-full">
                 <thead>
-                    <tr className="border-b border-gray-800">
+                    <tr className="border-b border-purple-800">
                         <th className="py-3 px-4 text-left text-white">ID</th>
                         <th className="py-3 px-4 text-left text-white">Title</th>
                         <th className="py-3 px-4 text-left text-white">Difficulty</th>
@@ -61,15 +63,14 @@ const QuestionTable = () => {
                 </thead>
                 <tbody>
                     {questions.map((question) => (
-                        <tr key={question.id} className="border-b border-gray-800 hover:bg-gray-900">
+                        <tr key={question.id} className="border-b border-purple-800 hover:bg-purple-900/30">
                             <td className="py-3 px-4">{question.id}</td>
                             <td className="py-3 px-4 text-white">{question.title}</td>
                             <td className="py-3 px-4">
-                                <span className={`px-2 py-1 rounded-full text-xs ${
-                                    question.difficulty === "Easy" ? "bg-gray-700 text-white" :
-                                    question.difficulty === "Medium" ? "bg-gray-600 text-white" :
-                                    "bg-gray-800 text-white"
-                                }`}>
+                                <span className={`px-2 py-1 rounded-full text-xs ${question.difficulty === "Easy" ? "bg-green-900 text-white" :
+                                    question.difficulty === "Medium" ? "bg-yellow-900 text-white" :
+                                        "bg-red-900 text-white"
+                                    }`}>
                                     {question.difficulty}
                                 </span>
                             </td>
@@ -99,16 +100,64 @@ const LeetCodeDashboard = () => {
     const [activeTab, setActiveTab] = useState('code');
     const [leftPanelWidth, setLeftPanelWidth] = useState(40); // Initial width percentage
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isHintModalOpen, setIsHintModalOpen] = useState(false);
+    const [isSolutionModalOpen, setIsSolutionModalOpen] = useState(false);
+    const [language, setLanguage] = useState('JavaScript');
     const resizeRef = useRef(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const isDraggingRef = useRef(false);
 
     const location = useLocation();
-    const problem = location.state?.problem; // Safe access
-  
-    if (!problem) {
-      return <div>Problem not found. Please try again.</div>;
+    const problem = location.state?.problem || {
+        title: "Two Sum",
+        difficulty: "Easy",
+        description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.",
+        testCases: [
+            {
+                input: "nums = [2,7,11,15], target = 9",
+                output: "[0,1]",
+                explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
+            },
+            {
+                input: "nums = [3,2,4], target = 6",
+                output: "[1,2]"
+            }
+        ]
+    };
+
+    // Mock hint and solution content
+    const hintContent = `
+    <div class="space-y-4">
+        <p>Consider using a data structure to store numbers you've already seen.</p>
+        <p>For each number, check if its complement (target - current number) already exists in your data structure.</p>
+        <p>Hash maps provide O(1) lookup time, which could be helpful here.</p>
+    </div>
+    `;
+
+    const solutionContent = `
+    <div class="space-y-4">
+        <h3 class="text-lg font-medium">Approach: Hash Map</h3>
+        <p>This problem can be solved efficiently using a hash map:</p>
+        <pre class="bg-gray-800 p-4 rounded-md">
+function twoSum(nums, target) {
+    const map = new Map();
+    
+    for (let i = 0; i < nums.length; i++) {
+        const complement = target - nums[i];
+        
+        if (map.has(complement)) {
+            return [map.get(complement), i];
+        }
+        
+        map.set(nums[i], i);
     }
+    
+    return [];
+};</pre>
+        <p class="mt-4"><strong>Time Complexity:</strong> O(n) where n is the length of the input array.</p>
+        <p><strong>Space Complexity:</strong> O(n) for storing the hash map.</p>
+    </div>
+    `;
 
     // Demo code
     const [code, setCode] = useState(`function twoSum(nums, target) {
@@ -158,7 +207,7 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
         if (!containerRef.current) return;
         const containerRect = containerRef.current.getBoundingClientRect();
         const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-        
+
         // Limit the resize range (min 20%, max 80%)
         if (newWidth >= 20 && newWidth <= 80) {
             setLeftPanelWidth(newWidth);
@@ -180,83 +229,104 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
     }, []);
 
     return (
-        <div className="flex flex-col h-screen bg-black" ref={containerRef}>
+        <div className="flex flex-col h-screen bg-gray-900" ref={containerRef}>
             {/* Header */}
-            <header className="bg-black text-white px-4 py-3 border-b border-gray-800 flex justify-between items-center">
+            <header className="bg-gradient-to-r from-violet-700 to-pink-500 text-white px-4 py-3 border-b border-purple-800 flex justify-between items-center">
                 <Link
-                    to="/questions" // 👈 go to dashboard directly
-                    className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors"
+                    to="/questions"
+                    className="flex items-center gap-2 text-white hover:text-purple-200 transition-colors"
                 >
                     <ArrowLeft size={20} />
                     <span>Back to Problems</span>
                 </Link>
                 <h1 className="text-xl font-bold text-white hidden md:block">CodeMentor AI</h1>
-                
-                <button 
-                    className="flex items-center gap-2 bg-white text-black hover:bg-gray-200 px-4 py-2 rounded transition-colors"
+
+                {/* <button
+                    className="flex items-center gap-2 bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded transition-colors bg-opacity-50 backdrop-blur-md"
                     onClick={() => setIsModalOpen(true)}
                 >
                     <List size={18} />
                     <span>Problem List</span>
-                </button>
+                </button> */}
             </header>
 
             {/* Main content area */}
             <div className="flex flex-1 overflow-hidden">
-                {/* Problem panel (left side) - Changed to white background */}
-                <div 
-                    className="bg-white text-black shadow-md overflow-y-auto" 
+                {/* Problem panel (left side) */}
+                <div
+                    className="bg-gray-800 text-white shadow-md overflow-y-auto border-r border-purple-800"
                     style={{ width: `${leftPanelWidth}%` }}
                 >
                     <div className="p-6">
                         <div className="flex justify-between items-center mb-4">
-                            <h1 className="text-2xl font-bold text-black">{problem.title}</h1>
-                            <span className="px-3 py-1 bg-gray-200 text-black rounded-full text-sm font-medium">
+                            <h1 className="text-2xl font-bold text-white">{problem.title}</h1>
+                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${problem.difficulty === "Easy" ? "bg-green-900 text-white" :
+                                problem.difficulty === "Medium" ? "bg-yellow-900 text-white" :
+                                    "bg-red-900 text-white"
+                                }`}>
                                 {problem.difficulty}
                             </span>
                         </div>
 
-                        <div className="prose max-w-none text-black">
+                        <div className="prose max-w-none text-white">
                             <p className="whitespace-pre-line">{problem.description}</p>
 
-                            <h3 className="font-medium mt-6 mb-2 text-black">TestCases:</h3>
-                            {problem.testCases.map((testcase: { input: string; output: string; explanation?: string }, idx:number) => (
-                                <div key={idx}>
-                                    <p>Input: {testcase.input}</p>
-                                    <p>Output: {testcase.output}</p>
-                                    {testcase.explanation && <p>Explanation: {testcase.explanation}</p>}
-                                </div>
-                            ))}
+                            <h3 className="font-medium mt-6 mb-2 text-white">TestCases:</h3>
 
-                            <h3 className="font-medium mt-6 mb-2 text-black">Constraints:</h3>
+                            <div className="mb-4 p-3 bg-gray-900 rounded-md border border-purple-800">
+                                <p>Input: {problem.sampleInput}</p>
+                                <p>Output: {problem.sampleOutput}</p>
+
+                            </div>
+
+                            <h3 className="font-medium mt-6 mb-2 text-white">Constraints: {problem.constraints}</h3>
+
+                            {/* Hint and Solution Buttons */}
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    className="flex items-center gap-2 bg-gradient-to-r from-violet-700 to-pink-500 text-white px-4 py-2 rounded transition-colors"
+                                    onClick={() => setIsHintModalOpen(true)}
+                                >
+                                    <Lightbulb size={18} />
+                                    <span>Hint</span>
+                                </button>
+
+                                <button
+                                    className="flex items-center gap-2 bg-gradient-to-r from-violet-700 to-pink-500 text-white px-4 py-2 rounded transition-colors"
+                                    onClick={() => setIsSolutionModalOpen(true)}
+                                >
+                                    <BookOpen size={18} />
+                                    <span>Solution</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Resizable divider */}
-                <div 
+                <div
                     ref={resizeRef}
-                    className="cursor-col-resize w-2 bg-gray-400 hover:bg-gray-300 active:bg-gray-200 transition-colors"
+                    className="cursor-col-resize w-2 bg-gradient-to-b from-violet-700 to-pink-500 hover:opacity-80 active:opacity-70 transition-opacity"
                     onMouseDown={handleMouseDown}
                     style={{ cursor: 'col-resize' }}
                 ></div>
 
                 {/* Code panel (right side) */}
-                <div 
-                    className="flex flex-col"
+                <div
+                    className="flex flex-col bg-gray-900"
                     style={{ width: `${100 - leftPanelWidth}%` }}
                 >
                     {/* Tabs navigation */}
-                    <div className="flex border-b border-gray-800 bg-black">
+                    <div className="flex border-b border-purple-800 bg-gray-900">
                         <button
-                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'code' ? 'text-white border-b-2 border-white' : 'text-gray-400'}`}
+                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'code' ? 'text-white border-b-2 border-pink-500' : 'text-gray-400'}`}
                             onClick={() => setActiveTab('code')}
                         >
                             <Code size={18} />
                             Code
                         </button>
                         <button
-                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'result' ? 'text-white border-b-2 border-white' : 'text-gray-400'}`}
+                            className={`px-4 py-3 flex items-center gap-1 font-medium ${activeTab === 'result' ? 'text-white border-b-2 border-pink-500' : 'text-gray-400'}`}
                             onClick={() => setActiveTab('result')}
                         >
                             <Terminal size={18} />
@@ -268,18 +338,28 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                     <div className="flex-1 overflow-hidden">
                         {activeTab === 'code' && (
                             <div className="h-full flex flex-col">
-                                <div className="bg-black text-white p-3 flex justify-between items-center border-b border-gray-800">
-                                    <div className="flex gap-2">
-                                        <span className="px-2 py-1 bg-gray-800 rounded text-sm">JavaScript</span>
+                                <div className="bg-gray-900 text-white p-3 flex justify-between items-center border-b border-purple-800">
+                                    <div className="flex items-center gap-2">
+                       
+                                        <select
+                                            value={language}
+                                            onChange={(e) => setLanguage(e.target.value)}
+                                            className="bg-gray-800 text-white text-sm px-2 py-1 rounded border border-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                        >
+                                            <option value="JavaScript">JavaScript</option>
+                                            <option value="Java">Java</option>
+                                            <option value="Python">Python</option>
+                                        </select>
                                     </div>
-                                    <button className="bg-white text-black hover:bg-gray-200 px-4 py-1 rounded flex items-center gap-1">
+
+                                    <button className="bg-gradient-to-r from-violet-700 to-pink-500 text-white hover:opacity-90 px-4 py-1 rounded flex items-center gap-1">
                                         <PlayCircle size={16} />
                                         Run
                                     </button>
                                 </div>
-                                <div className="flex-1 bg-black p-4 overflow-y-auto">
+                                <div className="flex-1 bg-gray-900 p-4 overflow-y-auto">
                                     <textarea
-                                        className="w-full h-full bg-black text-white font-mono resize-none outline-none"
+                                        className="w-full h-full bg-gray-900 text-white font-mono resize-none outline-none border border-purple-800 p-3 rounded"
                                         value={code}
                                         onChange={(e) => setCode(e.target.value)}
                                     />
@@ -288,12 +368,12 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
                         )}
 
                         {activeTab === 'result' && (
-                            <div className="h-full bg-black text-white p-6 overflow-y-auto">
+                            <div className="h-full bg-gray-900 text-white p-6 overflow-y-auto">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <CheckCircle className="text-white" size={20} />
+                                    <CheckCircle className="text-green-500" size={20} />
                                     <span className="font-medium text-white">All Tests Passed</span>
                                 </div>
-                                <pre className="font-mono text-white whitespace-pre-wrap">{result}</pre>
+                                <pre className="font-mono text-white whitespace-pre-wrap bg-gray-800 p-4 rounded-md border border-purple-800">{result}</pre>
                             </div>
                         )}
                     </div>
@@ -301,12 +381,30 @@ Memory: 42.5 MB, less than 68.22% of JavaScript submissions`;
             </div>
 
             {/* Question List Modal */}
-            <Modal 
-                isOpen={isModalOpen} 
+            <Modal
+                isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                title=" Problems "
+                title="Problems"
             >
                 <QuestionTable />
+            </Modal>
+
+            {/* Hint Modal */}
+            <Modal
+                isOpen={isHintModalOpen}
+                onClose={() => setIsHintModalOpen(false)}
+                title="Hint"
+            >
+                <div dangerouslySetInnerHTML={{ __html: hintContent }} className="text-white" />
+            </Modal>
+
+            {/* Solution Modal */}
+            <Modal
+                isOpen={isSolutionModalOpen}
+                onClose={() => setIsSolutionModalOpen(false)}
+                title="Solution"
+            >
+                <div dangerouslySetInnerHTML={{ __html: solutionContent }} className="text-white" />
             </Modal>
         </div>
     );

@@ -1,18 +1,17 @@
-
 import React, { useEffect, useState } from 'react';
+import { UserCircle } from 'lucide-react';
+import { useUser, SignInButton, SignOutButton, UserButton } from '@clerk/clerk-react';
 
 const Navbar: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { isSignedIn } = useUser(); // Clerk hook
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener('scroll', handleScroll);
-
-    // Cleanup the event listener on component unmount
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -31,16 +30,30 @@ const Navbar: React.FC = () => {
             </span>
           </a>
 
-        
-          {/* CTA Buttons */}
+          {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-4">
-            <a href="#" className="text-violet-400 font-medium hover:text-violet-300">Login</a>
-            <a href="#" className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">
-              Sign Up Free
-            </a>
+            {!isSignedIn ? (
+              <>
+                <SignInButton mode="modal">
+                  <button className="text-violet-400 font-medium hover:text-violet-300">Login</button>
+                </SignInButton>
+                <SignInButton mode="modal">
+                  <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">
+                    Sign Up Free
+                  </button>
+                </SignInButton>
+              </>
+            ) : (
+              <>
+                <UserButton />
+                <SignOutButton>
+                  <button className="text-violet-400 hover:text-violet-300 font-medium">Logout</button>
+                </SignOutButton>
+              </>
+            )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle */}
           <button
             className="md:hidden text-gray-300 focus:outline-none"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -56,15 +69,33 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Nav */}
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 space-y-3">
-        
             <div className="pt-2 flex flex-col space-y-2">
-              <a href="#" className="text-violet-400 font-medium hover:text-violet-300">Login</a>
-              <a href="#" className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all text-center">
-                Sign Up Free
-              </a>
+              {!isSignedIn ? (
+                <>
+<SignInButton mode="modal">
+  <button className="text-violet-400 font-medium hover:text-violet-300">Login</button>
+</SignInButton>
+
+<SignInButton mode="modal">
+  <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">
+    Sign Up Free
+  </button>
+</SignInButton>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center space-x-2 text-violet-400 font-medium">
+                    <UserCircle className="w-6 h-6" />
+                    <span>Profile</span>
+                  </div>
+                  <SignOutButton>
+                    <button className="text-violet-400 hover:text-violet-300 font-medium text-left">Logout</button>
+                  </SignOutButton>
+                </>
+              )}
             </div>
           </nav>
         )}
