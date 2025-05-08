@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { CheckCircle, Code, PlayCircle, Terminal, ArrowLeft, List, X, Heart, BookOpen, BookMarked, Copy, Save, Lightbulb } from 'lucide-react';
+import { CheckCircle, Code, PlayCircle, Terminal, ArrowLeft, List, X, Heart, Copy, Save, Lightbulb } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
