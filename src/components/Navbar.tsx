@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { UserCircle } from 'lucide-react';
 import { useUser, SignInButton, SignOutButton, UserButton } from '@clerk/clerk-react';
 
@@ -6,12 +7,29 @@ const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isSignedIn } = useUser(); // Clerk hook
+=======
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useUser
+} from '@clerk/clerk-react';
+
+const Navbar: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const { isSignedIn } = useUser();
+>>>>>>> tejas
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
+<<<<<<< HEAD
+=======
+
+>>>>>>> tejas
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -30,13 +48,22 @@ const Navbar: React.FC = () => {
             </span>
           </a>
 
+<<<<<<< HEAD
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-4">
             {!isSignedIn ? (
+=======
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            {isSignedIn ? (
+              <UserButton afterSignOutUrl="/" />
+            ) : (
+>>>>>>> tejas
               <>
                 <SignInButton mode="modal">
                   <button className="text-violet-400 font-medium hover:text-violet-300">Login</button>
                 </SignInButton>
+<<<<<<< HEAD
                 <SignInButton mode="modal">
                   <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">
                     Sign Up Free
@@ -49,6 +76,13 @@ const Navbar: React.FC = () => {
                 <SignOutButton>
                   <button className="text-violet-400 hover:text-violet-300 font-medium">Logout</button>
                 </SignOutButton>
+=======
+                <SignUpButton mode="modal">
+                  <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">
+                    Sign Up Free
+                  </button>
+                </SignUpButton>
+>>>>>>> tejas
               </>
             )}
           </div>
@@ -69,6 +103,7 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
+<<<<<<< HEAD
         {/* Mobile Nav */}
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 space-y-3">
@@ -94,6 +129,26 @@ const Navbar: React.FC = () => {
                   <SignOutButton>
                     <button className="text-violet-400 hover:text-violet-300 font-medium text-left">Logout</button>
                   </SignOutButton>
+=======
+        {/* Mobile Auth Menu */}
+        {isMenuOpen && (
+          <nav className="md:hidden mt-4 pb-4 space-y-3">
+            <div className="pt-2 flex flex-col space-y-2">
+              {isSignedIn ? (
+                <UserButton afterSignOutUrl="/" />
+              ) : (
+                <>
+                  <SignInButton mode="modal">
+                    <button className="text-violet-400 font-medium hover:text-violet-300 text-left">
+                      Login
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all text-center">
+                      Sign Up Free
+                    </button>
+                  </SignUpButton>
+>>>>>>> tejas
                 </>
               )}
             </div>

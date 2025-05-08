@@ -11,8 +11,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
+<<<<<<< HEAD
     "@clerk/clerk-react": "^5.24.2",
     "@clerk/react-router": "^1.4.1",
+=======
+    "@clerk/clerk-react": "^5.31.1",
+>>>>>>> tejas
     "@tabler/icons-react": "^3.31.0",
     "antd": "^5.24.3",
     "axios": "^1.9.0",
