@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import QuestionTable from "./pages/Ques/QuestionTable";
 import QuestionDetails from "./pages/Ques/QuestionDetail";
+import Demo from "./pages/Demo/DemoPage";
 import MyProfile from "./pages/MyProfile";
 import { SignIn, SignUp } from "@clerk/clerk-react";
 
@@ -23,17 +24,26 @@ const App: React.FC = () => {
         <Route
           path="/dashboard/*"
           element={
-            <SignedIn>
+
               <DashboardLayout />
-            </SignedIn>
+
           }
         />
         <Route
           path="/questions"
           element={
-            <SignedIn>
+
               <QuestionTable />
-            </SignedIn>
+
+          }
+        />
+
+<Route
+          path="/demo"
+          element={
+
+              <Demo />
+
           }
         />
         <Route
@@ -71,8 +81,6 @@ const App: React.FC = () => {
           }
         />
 
-        {/* Fallback route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

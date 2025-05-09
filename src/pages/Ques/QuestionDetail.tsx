@@ -88,23 +88,7 @@ const QuestionDetails: React.FC = () => {
             </div>
           </div>
 
-          {/* Hints Section */}
-          <div className="mt-8">
-            <h2 className="text-2xl font-semibold mb-4 text-white flex items-center">
-              <span className="mr-2">💡</span> Hints
-            </h2>
-            <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50 text-gray-300">
-              <ul className="space-y-3">
-                {typeof question.hints === 'string' ? (
-                  <li className="list-disc ml-5">{question.hints}</li>
-                ) : Array.isArray(question.hints) ? (
-                  question.hints.map((hint: string, index: number) => (
-                  <li key={index} className="list-disc ml-5">{hint}</li>
-                  ))
-                ) : null}
-              </ul>
-            </div>
-          </div>
+         
         </>
       );
     } else {
@@ -226,7 +210,7 @@ const QuestionDetails: React.FC = () => {
             </Link>
 
             <Link
-              to={`/questions/solve/${question.id}`}
+              to={`/dashboard/solve/${question._id}`}
               className="order-1 sm:order-2 inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white rounded-lg text-sm font-semibold transition-all duration-300 hover:shadow-xl shadow-lg border border-violet-500/20"
             >
               Solve This Question <span className="ml-2">🚀</span>
