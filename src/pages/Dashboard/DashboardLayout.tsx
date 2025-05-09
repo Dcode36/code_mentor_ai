@@ -2,7 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { CheckCircle, Code, PlayCircle, Terminal, ArrowLeft, List, X, Heart, Copy, Save, Lightbulb } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import Performance from './Performance';
 
+import { useUser } from '@clerk/clerk-react';
 // Modal component for the QuestionTable
 interface ModalProps {
     isOpen: boolean;
@@ -129,27 +132,25 @@ const LeetCodeDashboard = () => {
     const [activeTab, setActiveTab] = useState('code');
     const [leftPanelWidth, setLeftPanelWidth] = useState(40); // Initial width percentage
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAIModalOpen, setIsAIModelOpen] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
     const [language, setLanguage] = useState('JavaScript');
     const [showHint, setShowHint] = useState(false);
     const resizeRef = useRef(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const isDraggingRef = useRef(false);
-
+    const [showTab, setShowTab] = useState(false);
+    const { user } = useUser();
+    const userId = user?.id;
     const location = useLocation();
-    const problem = location.state?.problem || {
-        id: 1,
-        title: "Two Sum",
-        difficulty: "Easy",
-        description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.",
-        sampleInput: "nums = [2,7,11,15], target = 9",
-        sampleOutput: "[0,1]",
-        constraints: "2 <= nums.length <= 104\n-109 <= nums[i] <= 109\n-109 <= target <= 109\nOnly one valid answer exists."
-    };
-
+    const problem = location.state?.problem;
+    console.log(problem);
     // Demo code
     const [code, setCode] = useState<any>(problem.boilerplateCode['JavaScript']);
+    const [selectedTab, setSelectedTab] = useState('question');
 
+    const [explainLoading, setExplainLoading] = useState(false);
+    const [explainData, setExplainData] = useState<any>({});
     // Demo result
     const result = `✓ Test Case 1 Passed
 Input:${problem.sampleInput},
@@ -182,7 +183,15 @@ Expected: [0,1]
             setLeftPanelWidth(newWidth);
         }
     };
+    const handleMouseOver = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.boxShadow = '0 6px 14px rgba(0, 0, 0, 0.4)';
+    };
 
+    const handleMouseOut = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.3)';
+    };
     const handleMouseUp = () => {
         isDraggingRef.current = false;
         document.removeEventListener('mousemove', handleMouseMove);
@@ -200,12 +209,95 @@ Expected: [0,1]
     const copyCode = () => {
         navigator.clipboard.writeText(code).then(() => {
             // Could add toast notification here
-            console.log('Code copied to clipboard');
+            alert('Code copied to clipboard');
         });
     };
 
     const toggleFavorite = () => {
         setIsFavorite(!isFavorite);
+    };
+
+
+    const getLanguagebyId = (language: string) => {
+
+        if (language === "JavaScript") {
+            return 63;
+        } else if (language === "Python") {
+            return 71;
+        } else if (language === "Java") {
+            return 62;
+        } else if (language === "C++") {
+            return 54;
+        }
+    }
+    const [resultLoading, setResultLoading] = useState<any>(false);
+    const [apiresult, setApiresult] = useState<any>();
+    const [errormsg, setErrorMsg] = useState<any>(null);
+    const handleRunCode = async () => {
+        try {
+            setResultLoading(true);
+            // Simulate running code
+            console.log(`Running code in ${language}:`, code);
+
+            const paylod = {
+                userId: userId,
+                questionId: problem._id,
+                code: code,
+                language: getLanguagebyId(language),
+                stdin: "SnVkZ2Uw",
+            }
+
+            console.log("Payload:", paylod);
+
+            const response = await axios.post(`https://codementor-backend.vercel.app/api/solutions`, paylod, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            setShowTab(true);
+            console.log("Response:", response.data);
+            setActiveTab('result');
+            setApiresult(response.data.data);
+            setResultLoading(false);
+        }
+        catch (error) {
+            if (axios.isAxiosError(error) && error.response?.data?.message) {
+                console.error("Error running code:", error.response.data.message);
+                setErrorMsg(`Error: ${error.response.data.message}`);
+                setResultLoading(false);
+            } else {
+                console.error("An unexpected error occurred:", error);
+                setErrorMsg("An unexpected error occurred.");
+                setResultLoading(false);
+            }
+        }
+    }
+    const explainTheProblem = async () => {
+        try {
+            setExplainLoading(true);
+            const payload = {
+                title: problem.title,
+                description: problem.description,
+                difficulty: problem.difficulty,
+                sampleInput: problem.sampleInput,
+                sampleOutput: problem.sampleOutput,
+                constraints: problem.constraints,
+                language: language
+            };
+
+            const response = await axios.post('https://codementor-backend.vercel.app/api/gemini/generate-solution', payload, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            console.log("Response:", response.data);
+
+            setExplainData(response.data.solution); // update state
+            console.log("Explain Data:", explainData);
+        } catch (error) {
+            console.error("Error explaining the problem:", error);
+        } finally {
+            setExplainLoading(false); // always stop loading, even on error
+        }
     };
 
     return (
@@ -243,57 +335,130 @@ Expected: [0,1]
             {/* Main content area */}
             <div className="flex flex-1 overflow-hidden">
                 {/* Problem panel (left side) - Dark background with purple/pink accents */}
+
+                (
                 <div
                     className="bg-gray-900 text-white shadow-md overflow-y-auto border-r border-pink-900/50"
                     style={{ width: `${leftPanelWidth}%` }}
                 >
-                    <div className="p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{problem.title}</h1>
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${problem.difficulty === "Easy" ? "bg-gradient-to-r from-green-800 to-green-700 text-green-200" :
-                                problem.difficulty === "Medium" ? "bg-gradient-to-r from-yellow-800 to-yellow-700 text-yellow-200" :
-                                    "bg-gradient-to-r from-red-800 to-red-700 text-red-200"
-                                }`}>
-                                {problem.difficulty}
-                            </span>
-                        </div>
-                        <div className="prose max-w-none text-gray-300">
-                            <p className="whitespace-pre-line">{problem.description}</p>
+                    <div className="flex border-b border-pink-900/50 bg-gradient-to-r from-purple-900/30 to-pink-900/30">
+                        <button
+                            className={`px-4 py-3 flex items-center gap-2 font-medium transition-all ${selectedTab === 'question' ? 'text-pink-300 border-b-2 border-pink-500 bg-gray-900/30' : 'text-gray-400 hover:text-pink-200 hover:bg-gray-800/30'}`}
+                            onClick={() => setSelectedTab('question')}
+                        >
+                            Question
+                        </button>
 
-                            <div className="mt-6 mb-4 border-l-4 border-pink-700 pl-4 bg-gray-800/50 p-3 rounded-r-md">
-                                <h3 className="font-medium mb-2 text-pink-300">Example:</h3>
-                                <div className="font-mono text-sm bg-gray-800 p-3 rounded-md">
-                                    <p><span className="text-pink-400">Input:</span> {problem.sampleInput}</p>
-                                    <p><span className="text-pink-400">Output:</span> {problem.sampleOutput}</p>
-                                </div>
-                            </div>
-
-                            <div className="mt-6 border p-4 border-purple-800/50 rounded-md bg-purple-900/10">
-                                <h3 className="font-medium mb-2 text-pink-300">Constraints:</h3>
-                                <pre className="font-mono text-sm text-gray-300 whitespace-pre-wrap">{problem.constraints}</pre>
-                            </div>
-
-                            {showHint && (
-                                <div className="mt-6 p-4 bg-gradient-to-r from-pink-900/20 to-purple-900/20 rounded-md border border-pink-800/30">
-                                    <h3 className="flex items-center gap-2 font-medium mb-2 text-pink-300">
-                                        <Lightbulb size={18} className="text-pink-400" />
-                                        Hint:
-                                    </h3>
-                                    <p className="text-gray-300">{hint}</p>
-                                </div>
-                            )}
-
-                            <div className="mt-6">
-                                <button
-                                    className="flex items-center gap-2 text-pink-400 hover:text-pink-300 transition-all"
-                                    onClick={() => setShowHint(!showHint)}
-                                >
-                                    <Lightbulb size={18} />
-                                    {showHint ? "Hide Hint" : "Show Hint"}
-                                </button>
-                            </div>
-                        </div>
+                        <button
+                            className={`px-4 py-3 flex items-center gap-2 font-medium transition-all ${selectedTab === 'explaination' ? 'text-pink-300 border-b-2 border-pink-500 bg-gray-900/30' : 'text-gray-400 hover:text-pink-200 hover:bg-gray-800/30'}`}
+                            onClick={() => setSelectedTab('explaination')}
+                        >
+                            Solution
+                        </button>
                     </div>
+
+                    {/* Conditional rendering based on selectedTab */}
+                    {selectedTab === 'question' && (
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{problem.title}</h1>
+                                <div className="flex gap-2">
+                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${problem.difficulty === "easy" ? "bg-gradient-to-r from-green-800 to-green-700 text-green-200" :
+                                        problem.difficulty === "medium" ? "bg-gradient-to-r from-yellow-800 to-yellow-700 text-yellow-200" :
+                                            "bg-gradient-to-r from-red-800 to-red-700 text-red-200"
+                                        }`}>
+                                        {problem.difficulty}
+                                    </span>
+                                    <span
+                                        style={{ cursor: 'pointer' }}
+                                        className={`px-3 py-1 flex gap-2 rounded-full text-sm font-medium bg-blue-500`}>
+                                        Help
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="prose max-w-none text-gray-300">
+                                <p className="whitespace-pre-line">{problem.description}</p>
+
+                                <div className="mt-6 mb-4 border-l-4 border-pink-700 pl-4 bg-gray-800/50 p-3 rounded-r-md">
+                                    <h3 className="font-medium mb-2 text-pink-300">Example:</h3>
+                                    <div className="font-mono text-sm bg-gray-800 p-3 rounded-md">
+                                        <p><span className="text-pink-400">Input:</span> {problem.sampleInput}</p>
+                                        <p><span className="text-pink-400">Output:</span> {problem.sampleOutput}</p>
+                                    </div>
+                                </div>
+
+                                <div className="mt-6 border p-4 border-purple-800/50 rounded-md bg-purple-900/10">
+                                    <h3 className="font-medium mb-2 text-pink-300">Constraints:</h3>
+                                    <pre className="font-mono text-sm text-gray-300 whitespace-pre-wrap">{problem.constraints}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Explanation Tab */}
+                    {
+                        selectedTab === 'explaination' && (
+                            <div className="p-6">
+                                <h2 className="text-xl font-bold mb-4 text-pink-300">Solution</h2>
+
+                                {/* Loading state */}
+                                {explainLoading ? (
+                                    <div className="flex justify-center items-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        {/* Button to trigger the explanation */}
+                                        <button
+                                            style={{
+                                                background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+                                                color: 'white',
+                                                padding: '12px 24px',
+                                                border: 'none',
+                                                borderRadius: '30px',
+                                                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                                                cursor: 'pointer',
+                                                fontSize: '16px',
+                                                fontWeight: 600,
+                                                letterSpacing: '1px',
+                                                transition: 'all 0.3s ease',
+                                            }}
+                                            onClick={explainTheProblem}
+                                        >
+                                            Solution this problem
+                                        </button>
+
+                                        {/* Explanation, solution, and conclusion */}
+                                        {
+                                            explainData.explanation && (
+                                                <div className="mt-6 space-y-4">
+                                                    {/* Explanation */}
+                                                    <div className="bg-gray-800 p-4 rounded-md border-l-4 border-pink-600">
+                                                        <h3 className="text-lg font-semibold text-pink-300">Approach</h3>
+                                                        <p className="text-gray-300">{explainData.explanation}</p>
+                                                    </div>
+
+                                                    {/* Solution */}
+                                                    <div className="bg-gray-800 p-4 rounded-md border-l-4 border-pink-600">
+                                                        <h3 className="text-lg font-semibold text-pink-300">Solution</h3>
+                                                        <pre className="font-mono text-sm text-gray-300 whitespace-pre-wrap">{explainData.solution}</pre>
+                                                    </div>
+
+                                                    {/* Conclusion */}
+                                                    <div className="bg-gray-800 p-4 rounded-md border-l-4 border-pink-600">
+                                                        <h3 className="text-lg font-semibold text-pink-300">Conclusion</h3>
+                                                        <p className="text-gray-300">{explainData.conclusion}</p>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    }
+
                 </div>
 
                 {/* Resizable divider with animation */}
@@ -309,7 +474,7 @@ Expected: [0,1]
                 {/* Code panel (right side) */}
                 <div
                     className="flex flex-col bg-gray-900"
-                    style={{ width: `${100 - leftPanelWidth}%` }}
+                    style={{ width: `${100 - leftPanelWidth}%`, position: 'relative' }}
                 >
                     {/* Tabs navigation with gradient */}
                     <div className="flex border-b border-pink-900/50 bg-gradient-to-r from-purple-900/30 to-pink-900/30">
@@ -320,79 +485,144 @@ Expected: [0,1]
                             <Code size={18} />
                             Code
                         </button>
-                        <button
-                            className={`px-4 py-3 flex items-center gap-2 font-medium transition-all ${activeTab === 'result' ? 'text-pink-300 border-b-2 border-pink-500 bg-gray-900/30' : 'text-gray-400 hover:text-pink-200 hover:bg-gray-800/30'}`}
-                            onClick={() => setActiveTab('result')}
-                        >
-                            <Terminal size={18} />
-                            Result
-                        </button>
+                        {
+                            showTab ? (
+                                <button
+                                    className={`px-4 py-3 flex items-center gap-2 font-medium transition-all ${activeTab === 'result' ? 'text-pink-300 border-b-2 border-pink-500 bg-gray-900/30' : 'text-gray-400 hover:text-pink-200 hover:bg-gray-800/30'}`}
+                                    onClick={() => setActiveTab('result')}
+                                >
+                                    <Terminal size={18} />
+                                    Result
+                                </button>)
+                                :
+                                null
+
+                        }
                     </div>
 
                     {/* Tab content */}
-                    <div className="flex-1 overflow-hidden">
-                        {activeTab === 'code' && (
-                            <div className="h-full flex flex-col">
-                                <div className="bg-gray-900 text-white p-3 flex justify-between items-center border-b border-pink-900/50">
-                                    <div className="flex gap-2 items-center">
-                                        <select
-                                            className="bg-gray-800 text-pink-200 border border-purple-700 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-pink-600"
-                                            value={language}
-                                            onChange={(e) => {
-                                                setLanguage(e.target.value)
-                                                setCode(problem.boilerplateCode[e.target.value]);
-                                            }}
-                                        >
-                                            <option value="JavaScript">JavaScript</option>
-                                            <option value="Python">Python</option>
-                                            <option value="Java">Java</option>
-                                            <option value="Cplusplus">C++</option>
-                                        </select>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button
-                                            className="bg-gray-800 text-pink-300 hover:bg-gray-700 px-3 py-1 rounded flex items-center gap-1 transition-colors border border-gray-700"
-                                            onClick={copyCode}
-                                        >
-                                            <Copy size={14} />
-                                            Copy
-                                        </button>
-                                        <button
-                                            className="bg-gray-800 text-pink-300 hover:bg-gray-700 px-3 py-1 rounded flex items-center gap-1 transition-colors border border-gray-700"
-                                        >
-                                            <Save size={14} />
-                                            Save
-                                        </button>
-                                        <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-4 py-1 rounded-md flex items-center gap-1 transition-colors shadow-md shadow-pink-900/20">
-                                            <PlayCircle size={16} />
-                                            Run
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="flex-1 bg-gray-900 p-4 overflow-y-auto">
-                                    <textarea
-                                        className="w-full h-full bg-gray-900 text-pink-100 font-mono resize-none outline-none focus:ring-1 focus:ring-pink-600 rounded-md p-2 border border-gray-800"
-                                        value={code}
-                                        onChange={(e) => {
-                                            setCode(e.target.value)
-                                           
-                                        }}
-                                        spellCheck="false"
-                                    />
-                                </div>
+                    {
+                        resultLoading ? (
+                            <div className="flex justify-center items-center flex-1">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
                             </div>
-                        )}
+                        ) : (
+                            <div className="flex-1 overflow-hidden">
+                                {activeTab === 'code' && (
+                                    <div className="h-full flex flex-col">
+                                        <div className="bg-gray-900 text-white p-3 flex justify-between items-center border-b border-pink-900/50">
+                                            <div className="flex gap-2 items-center">
+                                                <select
+                                                    className="bg-gray-800 text-pink-200 border border-purple-700 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-pink-600"
+                                                    value={language}
+                                                    onChange={(e) => {
+                                                        setLanguage(e.target.value)
+                                                        setCode(problem.boilerplateCode[e.target.value]);
+                                                    }}
+                                                >
+                                                    <option value="JavaScript">JavaScript</option>
+                                                    <option value="Python">Python</option>
+                                                    <option value="Java">Java</option>
+                                                    <option value="Cplusplus">C++</option>
+                                                </select>
+                                            </div>
+                                            {
+                                                errormsg && (
+                                                    <div className="flex items-center gap-2 mb-4 p-3 bg-red-900/20 border border-red-800/30 rounded-md">
+                                                        <X className="text-red-400" size={20} />
+                                                        <span className="font-medium text-red-300">{errormsg}</span>
+                                                    </div>
+                                                )
+                                            }
+                                            <div className="flex gap-2">
+                                                <button
+                                                    className="bg-gray-800 text-pink-300 hover:bg-gray-700 px-3 py-1 rounded flex items-center gap-1 transition-colors border border-gray-700"
+                                                    onClick={copyCode}
+                                                >
+                                                    <Copy size={14} />
+                                                    Copy
+                                                </button>
+                                                <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-4 py-1 rounded-md flex items-center gap-1 transition-colors shadow-md shadow-pink-900/20"
+                                                    onClick={handleRunCode}
+                                                >
+                                                    <PlayCircle size={16} />
+                                                    Run
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 bg-gray-900 p-4 overflow-y-auto">
+                                            <textarea
+                                                className="w-full h-full bg-gray-900 text-pink-100 font-mono resize-none outline-none focus:ring-1 focus:ring-pink-600 rounded-md p-2 border border-gray-800"
+                                                value={code}
+                                                onChange={(e) => {
+                                                    setCode(e.target.value)
 
-                        {activeTab === 'result' && (
-                            <div className="h-full bg-gray-900 text-white p-6 overflow-y-auto">
-                                <div className="flex items-center gap-2 mb-4 p-3 bg-green-900/20 border border-green-800/30 rounded-md">
-                                    <CheckCircle className="text-green-400" size={20} />
-                                    <span className="font-medium text-green-300">All Tests Passed</span>
-                                </div>
-                                <pre className="font-mono text-pink-100 whitespace-pre-wrap bg-gray-800 p-4 rounded-md border border-gray-700/50 shadow-inner">{result}</pre>
+                                                }}
+                                                spellCheck="false"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'result' && (
+                                    <div className="h-full bg-gray-900 text-white p-6 overflow-y-auto">
+
+
+                                        {
+                                            apiresult?.decodedStdout?.replace(/[\n\s]/g, '') === problem?.sampleOutput ? (
+                                                <div className="flex items-center gap-2 mb-4 p-3 bg-green-900/20 border border-green-800/30 rounded-md">
+                                                    <CheckCircle className="text-green-400" size={20} />
+                                                    <span className="font-medium text-green-300">All Tests Passed</span>
+                                                </div>
+
+                                            ) : (
+                                                <div className="flex items-center gap-2 mb-4 p-3 bg-red-900/20 border border-red-800/30 rounded-md">
+                                                    <X className="text-red-400" size={20} />
+                                                    <span className="font-medium text-red-300">Some Tests Failed</span>
+                                                </div>
+                                            )
+                                        }
+
+                                        <pre className="font-mono text-pink-100 whitespace-pre-wrap bg-gray-800 p-4 rounded-md border border-gray-700/50 shadow-inner">
+
+                                            <p>Test Case</p>
+                                            <p className="text-pink-400">Input: {problem.sampleInput}</p>
+                                            <p className="text-pink-400">Output: {apiresult.decodedStdout.replace(/[\n\s]/g, '')}</p>
+                                            <p className="text-pink-400">Expected: {problem.sampleOutput}</p>
+                                        </pre>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
+                        )
+                    }
+
+                    <button
+                        style={{
+                            position: 'absolute',
+                            bottom: '10px',
+                            right: '10px',
+                            background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+                            color: 'white',
+                            padding: '12px 24px',
+                            border: 'none',
+                            borderRadius: '30px',
+                            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                            fontWeight: 600,
+                            letterSpacing: '1px',
+                            transition: 'all 0.3s ease',
+                        }}
+                        onMouseOver={handleMouseOver}
+                        onMouseOut={handleMouseOut}
+                        onClick={() => {
+                            setIsAIModelOpen(true);
+                            setActiveTab('code');
+                        }}
+                    >
+                        🚀 Refine AI
+                    </button>
+
                 </div>
             </div>
 
@@ -403,6 +633,15 @@ Expected: [0,1]
                 title="Problems List"
             >
                 <QuestionTable />
+            </Modal>
+
+
+            <Modal
+                isOpen={isAIModalOpen}
+                onClose={() => setIsAIModelOpen(false)}
+                title="Performace"
+            >
+                <Performance code={code} language={language} />
             </Modal>
         </div>
     );
