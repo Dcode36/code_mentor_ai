@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { useUser } from "@clerk/clerk-react";
+import { SignInButton, useUser } from "@clerk/clerk-react";
 
 import Loader from '../../components/Loader';
 
@@ -59,16 +59,16 @@ const QuestionTable: React.FC = () => {
   };
 
   const filteredQuestions = questions.filter(question => {
-    const matchesSearch = question.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          question.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDifficulty = difficultyFilter === null || 
-                             question.difficulty.toLowerCase() === difficultyFilter.toLowerCase();
+    const matchesSearch = question.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      question.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDifficulty = difficultyFilter === null ||
+      question.difficulty.toLowerCase() === difficultyFilter.toLowerCase();
     return matchesSearch && matchesDifficulty;
   });
 
   const handleSolveClick = (e: React.MouseEvent, question: Question) => {
     e.stopPropagation(); // Prevent the row click event from firing
-    
+
     if (isSignedIn) {
       navigate(`/dashboard/solve/${question._id}`, {
         state: { problem: question },
@@ -115,41 +115,37 @@ const QuestionTable: React.FC = () => {
             <div className="flex space-x-2">
               <button
                 onClick={() => setDifficultyFilter(null)}
-                className={`px-4 py-2 rounded-lg transition-all ${
-                  difficultyFilter === null
+                className={`px-4 py-2 rounded-lg transition-all ${difficultyFilter === null
                     ? 'bg-violet-600 text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 All
               </button>
               <button
                 onClick={() => setDifficultyFilter('easy')}
-                className={`px-4 py-2 rounded-lg transition-all ${
-                  difficultyFilter === 'easy'
+                className={`px-4 py-2 rounded-lg transition-all ${difficultyFilter === 'easy'
                     ? 'bg-emerald-700 text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 Easy
               </button>
               <button
                 onClick={() => setDifficultyFilter('medium')}
-                className={`px-4 py-2 rounded-lg transition-all ${
-                  difficultyFilter === 'medium'
+                className={`px-4 py-2 rounded-lg transition-all ${difficultyFilter === 'medium'
                     ? 'bg-amber-700 text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 Medium
               </button>
               <button
                 onClick={() => setDifficultyFilter('hard')}
-                className={`px-4 py-2 rounded-lg transition-all ${
-                  difficultyFilter === 'hard'
+                className={`px-4 py-2 rounded-lg transition-all ${difficultyFilter === 'hard'
                     ? 'bg-rose-700 text-white'
                     : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 Hard
               </button>
@@ -176,11 +172,10 @@ const QuestionTable: React.FC = () => {
                   <tbody className="divide-y divide-violet-700/30 bg-black/30">
                     {filteredQuestions.length > 0 ? (
                       filteredQuestions.map((question, index) => (
-                        <tr 
-                          key={question._id} 
-                          className={`hover:bg-violet-900/20 transition-colors group ${
-                            index % 2 === 0 ? 'bg-black/60' : 'bg-black/40'
-                          }`}
+                        <tr
+                          key={question._id}
+                          className={`hover:bg-violet-900/20 transition-colors group ${index % 2 === 0 ? 'bg-black/60' : 'bg-black/40'
+                            }`}
                           onClick={(e) => handleSolveClick(e, question)}
 
 
@@ -276,8 +271,8 @@ const QuestionTable: React.FC = () => {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <p className="text-lg">No questions found matching your criteria</p>
-                            <button 
-                              onClick={() => {setSearchQuery(''); setDifficultyFilter(null);}}
+                            <button
+                              onClick={() => { setSearchQuery(''); setDifficultyFilter(null); }}
                               className="mt-3 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-500 transition-colors"
                             >
                               Clear filters
@@ -330,12 +325,9 @@ const QuestionTable: React.FC = () => {
               >
                 Cancel
               </button>
-              <Link
-                to="/sign-in"
-                className="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-500 transition-colors"
-              >
-                Sign In
-              </Link>
+              <SignInButton>
+                <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">Login</button>
+              </SignInButton>
             </div>
           </div>
         </div>
