@@ -27,7 +27,7 @@ const QuestionTable: React.FC = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await axios.get('https://codementor-backend.vercel.app/api/questions');
+        const res = await axios.get('http://localhost:8900/api/questions');
         setQuestions(res.data);
       } catch (err) {
         console.error('Failed to fetch questions:', err);
