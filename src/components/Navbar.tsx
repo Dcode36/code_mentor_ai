@@ -1,18 +1,21 @@
-
 import React, { useEffect, useState } from 'react';
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useUser
+} from '@clerk/clerk-react';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const { isSignedIn } = useUser();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener('scroll', handleScroll);
-
-    // Cleanup the event listener on component unmount
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -31,16 +34,25 @@ const Navbar: React.FC = () => {
             </span>
           </a>
 
-        
-          {/* CTA Buttons */}
+          {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <a href="#" className="text-violet-400 font-medium hover:text-violet-300">Login</a>
-            <a href="#" className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">
-              Sign Up Free
-            </a>
+            {isSignedIn ? (
+              <UserButton afterSignOutUrl="/" />
+            ) : (
+              <>
+                <SignInButton mode="modal">
+                  <button className="text-violet-400 font-medium hover:text-violet-300">Login</button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">
+                    Sign Up Free
+                  </button>
+                </SignUpButton>
+              </>
+            )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle */}
           <button
             className="md:hidden text-gray-300 focus:outline-none"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -56,15 +68,26 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Auth Menu */}
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 space-y-3">
-        
             <div className="pt-2 flex flex-col space-y-2">
-              <a href="#" className="text-violet-400 font-medium hover:text-violet-300">Login</a>
-              <a href="#" className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all text-center">
-                Sign Up Free
-              </a>
+              {isSignedIn ? (
+                <UserButton afterSignOutUrl="/" />
+              ) : (
+                <>
+                  <SignInButton mode="modal">
+                    <button className="text-violet-400 font-medium hover:text-violet-300 text-left">
+                      Login
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all text-center">
+                      Sign Up Free
+                    </button>
+                  </SignUpButton>
+                </>
+              )}
             </div>
           </nav>
         )}
