@@ -37,7 +37,8 @@ const Navbar: React.FC = () => {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {isSignedIn ? (
-              <UserButton afterSignOutUrl="/" />
+              <UserButton afterSignOutUrl={typeof window !== "undefined" ? window.location.href : "/"} />
+
             ) : (
               <>
                 <SignInButton mode="modal">

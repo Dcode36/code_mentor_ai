@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import { useUser } from "@clerk/clerk-react";
+
 import Loader from '../../components/Loader';
 
 interface Question {
@@ -23,11 +25,15 @@ const QuestionTable: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const navigate = useNavigate();
+  const { isSignedIn } = useUser();
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await axios.get('http://localhost:8900/api/questions');
+        const res = await axios.get('https://codementor-backend.vercel.app/api/questions');
         setQuestions(res.data);
       } catch (err) {
         console.error('Failed to fetch questions:', err);
@@ -60,13 +66,25 @@ const QuestionTable: React.FC = () => {
     return matchesSearch && matchesDifficulty;
   });
 
+  const handleSolveClick = (e: React.MouseEvent, question: Question) => {
+    e.stopPropagation(); // Prevent the row click event from firing
+    
+    if (isSignedIn) {
+      navigate(`/dashboard/solve/${question._id}`, {
+        state: { problem: question },
+      });
+    } else {
+      setShowModal(true); // Show modal if not signed in
+    }
+  };
+
   return (
     <>
-      <div className="bg-gradient-to-b from-black to-gray-900 min-h-screen text-slate-200">
+      <div className="bg-gradient-to-b from-black to-gray-900 min-h-screen text-slate-200 px-6 py-10">
         {/* Navbar Section */}
         <Navbar />
 
-        <div className="max-w-7xl mx-auto pt-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto pt-16 px-10 sm:px-6 lg:px-8">
           {/* Hero Section */}
           <div className="text-center mb-10">
             <h1 className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-500 mb-4">
@@ -163,6 +181,9 @@ const QuestionTable: React.FC = () => {
                           className={`hover:bg-violet-900/20 transition-colors group ${
                             index % 2 === 0 ? 'bg-black/60' : 'bg-black/40'
                           }`}
+                          onClick={(e) => handleSolveClick(e, question)}
+
+
                         >
                           <td className="px-6 py-5">
                             <div className="flex items-center">
@@ -217,6 +238,7 @@ const QuestionTable: React.FC = () => {
                               <span className="text-gray-500 text-sm">-</span>
                             )}
                           </td>
+
                           <td className="px-6 py-5">
                             <div className="flex justify-center gap-3">
                               <Link
@@ -224,6 +246,7 @@ const QuestionTable: React.FC = () => {
                                 state={{ problem: question }}
                                 className="text-violet-400 hover:text-violet-300 p-2 rounded-full hover:bg-violet-900/50 transition-all tooltip-container"
                                 title="View Details"
+                                onClick={(e) => e.stopPropagation()}
                               >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -231,9 +254,8 @@ const QuestionTable: React.FC = () => {
                                 </svg>
                                 <span className="tooltip">View Details</span>
                               </Link>
-                              <Link
-                                to={`/dashboard/solve/${question._id}`}
-                                state={{ problem: question }}
+                              <button
+                                onClick={(e) => handleSolveClick(e, question)}
                                 className="text-pink-400 hover:text-pink-300 p-2 rounded-full hover:bg-pink-900/50 transition-all tooltip-container"
                                 title="Solve Challenge"
                               >
@@ -241,7 +263,7 @@ const QuestionTable: React.FC = () => {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                                 <span className="tooltip">Solve Challenge</span>
-                              </Link>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -292,6 +314,32 @@ const QuestionTable: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Login Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+          <div className="bg-gray-900 rounded-xl p-6 w-[300px] text-center space-y-4 border border-violet-500">
+            <svg className="w-12 h-12 mx-auto text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <p className="text-white text-lg font-semibold">Please sign in to solve this challenge</p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <Link
+                to="/sign-in"
+                className="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-500 transition-colors"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Additional CSS for tooltips */}
       <style>{`

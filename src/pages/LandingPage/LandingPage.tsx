@@ -53,20 +53,26 @@ const LandingPage: React.FC = () => {
     {
       quote: "CodeMentorAI helped me understand complex algorithms by breaking them down into manageable steps. I went from struggling with basic problems to confidently solving medium and hard interview questions!",
       name: "Digvijay Kadam",
-      designation: "Software Engineer at Google",
+      designation: "Btech CSE, SGU",
       src: img,
     },
     {
       quote: "The personalized hints are a game-changer. They give you just enough direction without spoiling the solution. I've significantly improved my problem-solving skills in just two months.",
-      name: "Michael Chen",
-      designation: "CS Student at MIT",
-      src: "https://img.freepik.com/free-photo/portrait-delighted-hipster-male-student-with-crisp-hair_176532-8157.jpg?semt=ais_hybrid&w=740"
+      name: "Prithviraj Indulkar",
+      designation: "Btech CSE, SGU",
+      src: "https://pbs.twimg.com/profile_images/1906416178643468288/zVTiQwA6_400x400.jpg"
     },
     {
       quote: "I was preparing for technical interviews and CodeMentorAI's progressive hint system helped me learn how to think through problems systematically. I got offers from three top tech companies!",
-      name: "Alex Rodriguez",
-      designation: "Frontend Developer at Meta",
+      name: "Pranav Sutar",
+      designation: "Btech CSE, SGU",
       src: "https://www.shutterstock.com/image-photo/joyful-happy-african-american-young-600nw-1470743384.jpg"
+    },
+    {
+      quote: "I was preparing for technical interviews and CodeMentorAI's progressive hint system helped me learn how to think through problems systematically. I got offers from three top tech companies!",
+      name: "Tejas Patil",
+      designation: "Btech CSE, SGU",
+      src: "https://tejas-patil.vercel.app/assets/profile-DvDMLWJ6.png"
     }
   ];
 
@@ -193,7 +199,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Testimonials Section with Scroll Animation */}
-      <section ref={testimonialsRef} className="py-20 bg-gray-900">
+      <section ref={testimonialsRef} id='about-us' className="py-20 bg-gray-900">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 scroll-animate fade-up">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Users Say</h2>
@@ -262,97 +268,55 @@ const LandingPage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <a
-                href="/"
+                href="/questions"
                 className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-medium rounded-lg px-8 py-4 text-center transition-all hover:transform hover:scale-105"
               >
                 Get Started For Free
               </a>
-              <a
-                href="/"
-                className="border border-violet-700 hover:border-violet-600 rounded-lg px-8 py-4 text-center font-medium transition-colors hover:bg-violet-900 hover:bg-opacity-20"
-              >
-                Schedule a Demo
-              </a>
+         
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-black pt-16 pb-8 border-t border-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Product</h3>
-              <ul className="space-y-2">
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Features</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Pricing</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Tutorial</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Changelog</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Resources</h3>
-              <ul className="space-y-2">
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Blog</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Documentation</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Community</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Help Center</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">About Us</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Careers</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Contact</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Partners</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Privacy Policy</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Terms of Service</a></li>
-                <li><a href="/" className="text-gray-400 hover:text-violet-400 transition-colors">Cookie Policy</a></li>
-              </ul>
-            </div>
-          </div>
+{/* Footer */}
+<footer className="bg-black pt-8 pb-4 border-t border-gray-800">
+  <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+      {/* About Us Section */}
+      <div>
+        <h3 className="text-lg font-semibold text-white">About Us</h3>
+        <p className="text-gray-400 text-sm">
+          <a href="#about-us" className="text-violet-400 hover:text-violet-300 transition-colors">Learn more about our mission</a>
+        </p>
+      </div>
 
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center mb-4 md:mb-0">
-              <span className="text-2xl font-bold bg-gradient-to-r from-violet-500 to-pink-500 bg-clip-text text-transparent">
-                CodeMentorAI
-              </span>
-            </div>
+      {/* Location Section */}
+      <div>
+        <h3 className="text-lg font-semibold text-white">Location</h3>
+        <p className="text-gray-400 text-sm">
+          <a href="/" className="text-violet-400 hover:text-violet-300 transition-colors">Kolhapur ❤️</a>
+        </p>
+      </div>
 
-            <div className="flex space-x-6">
-              <a href="/" className="text-gray-400 hover:text-violet-400">
-                <span className="sr-only">Twitter</span>
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                </svg>
-              </a>
-              <a href="/" className="text-gray-400 hover:text-violet-400">
-                <span className="sr-only">GitHub</span>
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-                </svg>
-              </a>
-              <a href="/" className="text-gray-400 hover:text-violet-400">
-                <span className="sr-only">LinkedIn</span>
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clipRule="evenodd" />
-                </svg>
-              </a>
-            </div>
-          </div>
+      {/* FAQ Section */}
+      <div>
+        <h3 className="text-lg font-semibold text-white">FAQ</h3>
+        <p className="text-gray-400 text-sm">
+          <a href="#faq" className="text-violet-400 hover:text-violet-300 transition-colors">Frequently Asked Questions</a>
+        </p>
+      </div>
+    </div>
 
-          <div className="text-center mt-8 text-sm text-gray-500">
-            <p>&copy; {new Date().getFullYear()} CodeMentorAI. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+    {/* Footer Copyright */}
+    <div className="text-center mt-8 text-sm text-gray-500">
+      <p>&copy; {new Date().getFullYear()} CodeMentorAI. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+
 
 
     </div>
