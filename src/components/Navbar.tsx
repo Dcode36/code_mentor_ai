@@ -41,10 +41,10 @@ const Navbar: React.FC = () => {
 
             ) : (
               <>
-                <SignInButton mode="modal">
+                <SignInButton>
                   <button className="text-violet-400 font-medium hover:text-violet-300">Login</button>
                 </SignInButton>
-                <SignUpButton mode="modal">
+                <SignUpButton>
                   <button className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white px-4 py-2 rounded-md font-medium transition-all">
                     Sign Up Free
                   </button>
